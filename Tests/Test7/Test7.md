@@ -12,6 +12,8 @@
 | Task | `Go1JoystickFlatTerrain` (default config, domain randomization on) |
 | `ppo_params.num_timesteps` | 120,000,000 |
 | `ppo_params.num_evals` | 16 |
+| `ppo_params.num_resets_per_eval` | 10 (default) |
+| Reset every | 200 steps (computed, see [Test 9.2](../Test9.2/Test9.2.md)) |
 | **Steps actually run** | **122,880,000** (15 epochs of 8,192,000) |
 | `num_envs` | 4096 |
 | Hardware | NVIDIA GeForce RTX 5060 Laptop (8 GB), WSL2 Ubuntu 24.04 |

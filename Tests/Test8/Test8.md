@@ -12,6 +12,8 @@
 | Task | `Go1JoystickRoughTerrain` (default config, domain randomization on) |
 | `ppo_params.num_timesteps` | 110,000,000 |
 | `ppo_params.num_evals` | 18 |
+| `ppo_params.num_resets_per_eval` | 10 (default) |
+| Reset every | 160 steps (computed, see [Test 9.2](../Test9.2/Test9.2.md)) |
 | Planned steps | 111,411,200 (17 epochs of 6,553,600) |
 | **Steps actually run** | **91,750,400** (14 epochs). The run crashed before the last 3. |
 | `num_envs` | 4096 |

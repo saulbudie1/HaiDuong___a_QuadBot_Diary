@@ -1,0 +1,557 @@
+E1026 04:57:45.115472    8899 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.97GiB (6410993664 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1026 04:57:45.118940    8899 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.37GiB (5769894400 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1026 04:57:45.122033    8899 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.84GiB (5192904704 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1026 04:57:45.125373    8899 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.35GiB (4673614336 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+Warp 1.18.0 initialized:
+   CUDA Toolkit 13.4, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5060 Laptop GPU" (8 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/thanh/.cache/warp/1.18.0
+Module mujoco.mjx.warp.ffi 4443472 load on device 'cuda:0' took 3.08 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.smooth 43a6a77 load on device 'cuda:0' took 28.82 ms  (cached)
+Module _nxn_broadphase__locals__kernel_95773766 9577376 load on device 'cuda:0' took 2.07 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_c5d19cc4 c5d19cc load on device 'cuda:0' took 2.25 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 1.65 ms  (cached)
+Module _friction_dof__locals__kernel_febe3015 febe301 load on device 'cuda:0' took 6.28 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_b1bbc842 b1bbc84 load on device 'cuda:0' took 1.98 ms  (cached)
+Module _efc_contact_init__locals__kernel_3a7c064e 3a7c064 load on device 'cuda:0' took 5.37 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_b0c1fdf8 5fcbd59 load on device 'cuda:0' took 2.35 ms  (cached)
+Module _efc_contact_update__locals__kernel_efb3ac6e efb3ac6 load on device 'cuda:0' took 1.58 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.sensor 8feaecd load on device 'cuda:0' took 3.13 ms  (cached)
+Module _contact_match_builder__locals___contact_match_4da0430b 4da0430 load on device 'cuda:0' took 2.46 ms  (cached)
+Module _contact_sort__locals__contact_sort_bed1da43 6afef3a load on device 'cuda:0' took 2.02 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.forward 9a96b97 load on device 'cuda:0' took 2.71 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.passive 0de6fd1 load on device 'cuda:0' took 3.18 ms  (cached)
+Module _qfrc_passive_kernel__locals__kernel_976399dd 976399d load on device 'cuda:0' took 1.28 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.forward bdd5619 load on device 'cuda:0' took 2.68 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 1.55 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.support 770ef7d load on device 'cuda:0' took 1.57 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 219.77 ms  (cached)
+Module _solve_init_dof__locals__kernel_60896b56 60896b5 load on device 'cuda:0' took 2.66 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.solver 5b3c3b6 load on device 'cuda:0' took 2.07 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 1.94 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 1.37 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 1.37 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 1.58 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 1.46 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 1.84 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_54dfce67 5df6a71 load on device 'cuda:0' took 4.03 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 199.57 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_5687a5b9 74f86b3 load on device 'cuda:0' took 3.39 ms  (cached)
+Module _update_constraint_efc__locals__kernel_e953547e e953547 load on device 'cuda:0' took 1.65 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_d92a3413 d92a341 load on device 'cuda:0' took 1.72 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_e9f8c963 e9f8c96 load on device 'cuda:0' took 2.92 ms  (cached)
+Module _update_gradient_grad__locals__kernel_87959044 8795904 load on device 'cuda:0' took 2.15 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5bef8016 d05526c load on device 'cuda:0' took 188.84 ms  (cached)
+Module _solve_done__locals__kernel_a46fb74d a46fb74 load on device 'cuda:0' took 2.79 ms  (cached)
+Module _next_time_builder__locals___next_time_bc454e15 bc454e1 load on device 'cuda:0' took 3.91 ms  (cached)
+steps=         0  reward=0.002  t=0:01:00.890376
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+steps=   1638400  reward=0.003  t=0:02:56.578091
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+Tnd 1986817907
+steps=   3276800  reward=0.015  t=0:03:35.526387
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+To diu
+steps=   4915200  reward=0.101  t=0:03:54.196854
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+steps=   6553600  reward=4.340  t=0:04:13.339919
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+steps=   8192000  reward=9.453  t=0:04:33.669894
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+Tod 1986817907
+To  1986817907
+steps=   9830400  reward=13.812  t=0:04:52.983627
+To  1986817907
+To  1986817907
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+steps=  11468800  reward=14.775  t=0:05:12.307706
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+linesr iterations limit reached - please increase iterations beyond 1
+steps=  13107200  reward=16.533  t=0:05:32.458035
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+ond 1986817907
+Tnd 1986817907
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+steps=  14745600  reward=17.200  t=0:05:51.502122
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+Tnd 1986817907
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+steps=  16384000  reward=17.642  t=0:06:11.300983
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+steps=  18022400  reward=18.146  t=0:06:31.243277
+To diu
+To diu
+To diu
+To diu
+To diu
+To diu
+To dis
+To dis
+To dis
+To dis
+To dis
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To  1986817907
+To d1986817907
+Tod 1986817907
+To dis
+To dis
+steps=  19660800  reward=17.032  t=0:06:50.271006
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+To d1986817907
+steps=  21299200  reward=18.131  t=0:07:10.644026
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+steps=  22937600  reward=18.760  t=0:07:29.261520
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+steps=  24576000  reward=18.097  t=0:07:48.104335
+To diu
+To diu
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+steps=  26214400  reward=19.066  t=0:08:08.027078
+To dis
+To dis
+steps=  27852800  reward=19.014  t=0:08:27.140715
+To diu
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+ond 1986817907
+ond 1986817907
+ond 1986817907
+ond 1986817907
+ond 1986817907
+ond 1986817907
+steps=  29491200  reward=19.001  t=0:08:46.824516
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+To diu
+steps=  31129600  reward=19.698  t=0:09:05.723807
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+steps=  32768000  reward=19.877  t=0:09:24.733651
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+To dis
+ond 1986817907
+Tnd 1986817907
+ond 1986817907
+ond 1986817907
+Tnd 1986817907
+ond 1986817907
+Tnd 1986817907
+ond 1986817907
+Tnd 1986817907
+Tnd 1986817907
+steps=  34406400  reward=19.501  t=0:09:44.713199
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+steps=  36044800  reward=19.206  t=0:10:03.893068
+Tnd 1986817907
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+To d1986817907
+steps=  37683200  reward=19.455  t=0:10:23.104601
+To d1986817907
+To diu
+To dis
+To dis
+To dis
+To dis
+To dis
+To dis
+To dis
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+steps=  39321600  reward=19.983  t=0:10:43.005107
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+To diu
+To diu
+To diu
+steps=  40960000  reward=19.745  t=0:11:01.740580
+Tod 1986817907
+Tod 1986817907
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+ond 1986817907
+ond 1986817907
+ond 1986817907
+ond 1986817907
+Tod 1986817907
+ond 1986817907
+steps=  42598400  reward=19.672  t=0:11:21.782014
+To d1986817907
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+To d1986817907
+steps=  44236800  reward=19.568  t=0:11:40.523643
+steps=  45875200  reward=20.673  t=0:11:59.784150
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+Tnd 1986817907
+ond 1986817907
+Tnd 1986817907
+Tod 1986817907
+Tod 1986817907
+Tnd 1986817907
+Tnd 1986817907
+steps=  47513600  reward=21.652  t=0:12:19.545629
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+ for all)
+steps=  49152000  reward=20.855  t=0:12:38.169107
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+To diu
+steps=  50790400  reward=21.753  t=0:12:58.032832
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+steps=  52428800  reward=22.949  t=0:13:16.648498
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+ for all)
+To diu
+steps=  54067200  reward=22.383  t=0:13:35.578191
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+To dis
+To dis
+To dis
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+steps=  55705600  reward=22.919  t=0:13:55.453809
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+steps=  57344000  reward=24.135  t=0:14:14.000924
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+To dis
+To dis
+To dis
+To dis
+linesearch iterntionmit reached - please increase iterations beyond 1
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+ond 1986817907
+ond 1986817907
+ond 1986817907
+ond 1986817907
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+steps=  58982400  reward=24.921  t=0:14:32.700789
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+steps=  60620800  reward=25.548  t=0:14:52.563595
+To diu
+To diu
+To diu
+To diu
+To diu
+To d1986817907
+To diu
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+solver ite iterations limit reached - please increase ls_iterations beyond 5
+solver iteratioations limit reached - please increase ls_iterations beyond 5
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+steps=  62259200  reward=24.248  t=0:15:10.757692
+To dis
+To dis
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver rch iterations limit reached - please increase ls_iterations beyond 5
+To d1986817907
+To diu
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+To  1986817907
+steps=  63897600  reward=24.912  t=0:15:30.661726
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+steps=  65536000  reward=25.755  t=0:15:49.237556
+Tod 1986817907
+Tod 1986817907
+steps=  67174400  reward=25.266  t=0:16:07.728330
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+ond 1986817907
+To diu
+steps=  68812800  reward=25.950  t=0:16:27.349531
+solverarch iterations limit reached - please increase ls_iterations beyond 5
+steps=  70451200  reward=25.967  t=0:16:45.783628
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+ond 1986817907
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+steps=  72089600  reward=25.547  t=0:17:05.522651
+steps=  73728000  reward=26.351  t=0:17:23.778945
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To diu
+To diu
+To diu
+steps=  75366400  reward=26.567  t=0:17:42.586056
+ond 1986817907
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+To disabl disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To d1986817907
+To d1986817907
+steps=  77004800  reward=26.445  t=0:18:02.686059
+To diu
+steps=  78643200  reward=27.197  t=0:18:21.238038
+To d1986817907
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+sinesearch iterations limit reached - please increase ls_iterations beyond 5
+steps=  80281600  reward=27.032  t=0:18:41.330248
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+steps=  81920000  reward=26.860  t=0:18:59.977661
+steps=  83558400  reward=27.075  t=0:19:19.390915
+steps=  85196800  reward=27.575  t=0:19:39.167161
+ond 1986817907
+ond 1986817907
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+solesearch iterations limit reached - please increase ls_iterations beyond 5
+ond 1986817907
+solver iteratirations limit reached - please increase ls_iterations beyond 5
+Tod 1986817907
+steps=  86835200  reward=27.019  t=0:19:57.858941
+Tnd 1986817907
+To diu
+solver iterationtions limit reached - please increase ls_iterations beyond 5
+steps=  88473600  reward=26.906  t=0:20:16.227923
+Tod 1986817907
+To  1986817907
+To  1986817907
+solver ich iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+solver ith iterations limit reached - please increase ls_iterations beyond 5
+steps=  90112000  reward=27.275  t=0:20:36.378560
+sonesearch iterations limit reached - please increase ls_iterations beyond 5
+steps=  91750400  reward=26.704  t=0:20:55.018397
+solvsearch iterations limit reached - please increase ls_iterations beyond 5
+solveearch iterations limit reached - please increase ls_iterations beyond 5
+To disabo disable the print warning: m.opt.warn_overflow &= ~mjw.OverflowType.LS_ITERATIONS (or = 0 for all)
+To d1986817907
+To d1986817907
+To d1986817907
+steps=  93388800  reward=27.058  t=0:21:14.676301
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+solver iteriterations limit reached - please increase ls_iterations beyond 5
+solver iteraterations limit reached - please increase ls_iterations beyond 5
+steps=  95027200  reward=26.693  t=0:21:33.376388
+steps=  96665600  reward=26.530  t=0:21:52.225300
+time to jit: 0:01:00.890376
+time to train: 0:20:51.334924
+last step count: 96665600

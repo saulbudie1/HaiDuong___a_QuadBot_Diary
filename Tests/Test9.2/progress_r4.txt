@@ -1,0 +1,14 @@
+[14:17] train go1_t92_s2_e60_r4 (seed 2, evals 60, resets 4, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 60
+31:ppo_params.num_resets_per_eval = 4
+59:    seed=2,
+steps= 115998720  reward=27.072  t=0:24:32.040153
+time to jit: 0:00:57.207554
+time to train: 0:23:34.832599
+last step count: 115998720
+[14:42] sweep go1_t92_s2_e60_r4
+   ckpt_68812800  track 0.951  vx +0.947  dist  18.67 m  z 0.29-0.31  up 1.00  (27 s)
+       go1_final  track 0.959  vx +0.931  dist  18.25 m  z 0.29-0.31  up 1.00  (28 s)
+done
+[14:47] finished

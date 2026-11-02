@@ -91,7 +91,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 
 ---
 
-<details open>
+<details>
 <summary><h2>Oct 26 — Test 9.2: it is the reset interval, and my first overnight run went badly</h2></summary>
 
 **What I tried.** Test 9.1 left me with "the 60-evaluation setup stops the walking". My reading of the Brax code (not checked line by line) is that all environments reset every so many steps, and that this interval depends on `num_evals` and `num_resets_per_eval`: every 40 steps at 60 evaluations, 80 at 31, 200 at 16. So I set the interval directly. I trained seed 2 and seed 3 at 60 evaluations with `num_resets_per_eval` 5 (interval 80), and at 31 evaluations with `num_resets_per_eval` 20 (interval 40). I also trained seed 4 at 60 evaluations with the default.
@@ -105,6 +105,25 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 **New rule: small pieces.** One unit is one training run plus its own sweep (about 30 minutes). After each unit I copy its small files into the repo and plot it before the next one starts, and I check that `go1_final` exists. No more than two or three units chained. Before leaving I check `tmux ls` and the progress file, and the laptop stays plugged in and awake while a job runs.
 
 **Next.** Plot and copy the five finished runs, rerun seed 4 with resets 5 on its own, and try one more interval (for example a reset about every 120 steps) to see where the line is. Details are in [`Tests/Test9.2/Test9.2.md`](Tests/Test9.2/Test9.2.md).
+
+</details>
+
+---
+
+<details open>
+<summary><h2>Oct 27 — A new ground, a party hat, and the first walk on it (Test 9.3)</h2></summary>
+
+**What I did.** I wanted a ground I designed myself, so I described it and Claude generated it: two sine waves crossing in x and y, a 0.4 m wavelength, crest heights that vary between 1x and 1.5x, a 100 x 100 m patch and the colour `#9c7590`. It is `Assets/Grounds/SimpleUniFormRoughGround_1.xml`. The design is mine and the file was written by Claude, so it is in [`Declaration.md`](Declaration.md). I also had Claude attach my cone model (`cone_tophat.STL`) to the dog's head as a visual-only hat. It has no collisions and no mass.
+
+**Test 9.3.** Before training on the ground I checked that it loads and that a walking policy can cross it. I used the Test 7 policy (trained on flat ground only), command 1 / 0 / 0. `track` was **0.92** on the new ground against 0.94 on flat ground, 18.5 m in 20 s, upright and no fall. Both the ground and the hat load in Playground, which I had not tried before.
+
+**A thing that confused me.** On the stock rough terrain the same policy "fell" at 12.2 s. It did not stumble. That stock patch is only 20 m wide, and the robot walked off the edge (it crosses 10 m from the centre at about 11.8 s). Over the 612 steps before the edge its `track` was 0.887. The new ground is 100 m wide, so this cannot happen in a 20 s run.
+
+**The hat.** I ran the same episode with the hat on. `track` was 0.9203 against 0.9199. That is inside the spread between my first two no-hat runs (0.9205 and 0.9199), so I see no effect, but it is one run, and the body turned -12.5 degrees against about -8, which I do not read as the hat.
+
+**Videos.** Rendering on this ground is slow, about 17 minutes per camera, probably because of the 4-million-cell heightfield (I did not test that). Running the three cameras as three parallel processes took about 20 minutes in total. The README now shows the hat run, with the ground at the bottom. Details are in [`Tests/Test9.3/Test9.3.md`](Tests/Test9.3/Test9.3.md).
+
+**Next.** Whether the ground is trainable is untested. A short smoke run (2048 environments, reset every 80 steps) would show whether it fits in 8 GB.
 
 </details>
 
@@ -131,6 +150,10 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Do not chain a whole night's work into one job. One unit (a run and its sweep) at a time, copied to the repo as it finishes.
 - A reward of 12.8 and a reward of 20.0 can both be a robot that stands still (`track` 0.0187 for both).
 - The vision in the lab's paper is a tiny simulated depth image (read from the PDF text), with no real-robot experiment described.
+- The Test 7 policy, trained on flat ground only, walks across my new 100 m sine ground (`track` 0.92 against 0.94 on flat ground; one rollout, one command). Test 9.3.
+- The stock rough terrain is only a 20 m patch. At 1 m/s the robot walks off its edge at about 12 s, and that is the "fall" in my rollout, not a stumble.
+- A visual-only hat on the trunk made no visible difference to a rollout (`track` 0.9203 against 0.9199, one run each).
+- Rendering the 4-million-cell ground costs about 17 minutes per camera. Three parallel renders took about 20 minutes in total.
 
 </details>
 
@@ -143,6 +166,8 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Whether it walks backward and turns in place (the diagonals work).
 - How much a different random seed changes things, and whether the drift following the sideways command is real.
 - Whether more `num_envs` (8192) changes the result.
+- Whether I can train on the new ground at all: time, GPU memory (Test 8 ran out on the stock rough terrain) and whether the policy learns to walk on it. Test 9.3 only shows that a flat-trained policy walks on it.
+- Whether the hat has a small effect hidden in the run-to-run spread (needs repeated runs), and whether the huge heightfield is the reason for the slow rendering.
 - Whether the full 111M steps on rough ground would change the result (the reward was still rising), and why the GPU ran out of memory at epoch 14.
 
 </details>

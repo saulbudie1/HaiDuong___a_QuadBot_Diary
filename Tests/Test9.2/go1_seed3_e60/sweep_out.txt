@@ -1,0 +1,81 @@
+E1026 04:51:45.786513    8494 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.97GiB (6410993664 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1026 04:51:45.789263    8494 cuda_executor.cc:1439] [0] Failed to allocate device memory of 5.37GiB (5769894400 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1026 04:51:45.792381    8494 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.84GiB (5192904704 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+E1026 04:51:45.796078    8494 cuda_executor.cc:1439] [0] Failed to allocate device memory of 4.35GiB (4673614336 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:242
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:510
+
+Warp 1.18.0 initialized:
+   CUDA Toolkit 13.4, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5060 Laptop GPU" (8 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/thanh/.cache/warp/1.18.0
+Module mujoco.mjx.warp.ffi 4443472 load on device 'cuda:0' took 3.74 ms  (cached)
+command: 1.0 0.0 0.0   10 checkpoints in .   -> sweep_x1.0_y0.0_yaw0.0.csv
+Module mujoco.mjx.third_party.mujoco_warp._src.smooth 43a6a77 load on device 'cuda:0' took 28.17 ms  (cached)
+Module _nxn_broadphase__locals__kernel_95773766 9577376 load on device 'cuda:0' took 1.89 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_c5d19cc4 c5d19cc load on device 'cuda:0' took 1.95 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.constraint 8d4d513 load on device 'cuda:0' took 6.13 ms  (cached)
+Module _friction_dof__locals__kernel_febe3015 febe301 load on device 'cuda:0' took 2.96 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_b1bbc842 b1bbc84 load on device 'cuda:0' took 1.85 ms  (cached)
+Module _efc_contact_init__locals__kernel_3a7c064e 3a7c064 load on device 'cuda:0' took 7.12 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_b0c1fdf8 5fcbd59 load on device 'cuda:0' took 2.40 ms  (cached)
+Module _efc_contact_update__locals__kernel_efb3ac6e efb3ac6 load on device 'cuda:0' took 2.17 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.sensor 8feaecd load on device 'cuda:0' took 2.55 ms  (cached)
+Module _contact_match_builder__locals___contact_match_4da0430b 4da0430 load on device 'cuda:0' took 2.09 ms  (cached)
+Module _contact_sort__locals__contact_sort_bed1da43 6afef3a load on device 'cuda:0' took 1.79 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.forward 9a96b97 load on device 'cuda:0' took 1.92 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.passive 0de6fd1 load on device 'cuda:0' took 2.38 ms  (cached)
+Module _qfrc_passive_kernel__locals__kernel_976399dd 976399d load on device 'cuda:0' took 1.97 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.forward bdd5619 load on device 'cuda:0' took 2.30 ms  (cached)
+Module _qfrc_smooth__locals__kernel_8b823980 8b82398 load on device 'cuda:0' took 1.80 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.support 770ef7d load on device 'cuda:0' took 2.41 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_3c544b6e 564f1e2 load on device 'cuda:0' took 194.23 ms  (cached)
+Module _solve_init_dof__locals__kernel_60896b56 60896b5 load on device 'cuda:0' took 2.17 ms  (cached)
+Module mujoco.mjx.third_party.mujoco_warp._src.solver 5b3c3b6 load on device 'cuda:0' took 2.00 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_f7cae18b f7cae18 load on device 'cuda:0' took 2.60 ms  (cached)
+Module mul_m_kernel__locals___mul_m_f3de1cc7 f3de1cc load on device 'cuda:0' took 2.10 ms  (cached)
+Module _update_constraint_efc__locals__kernel_0539aa50 0539aa5 load on device 'cuda:0' took 1.79 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_bd7ca2ec bd7ca2e load on device 'cuda:0' took 2.03 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_b20934d7 b20934d load on device 'cuda:0' took 2.48 ms  (cached)
+Module _update_gradient_grad__locals__kernel_c876081d c876081 load on device 'cuda:0' took 1.83 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_54dfce67 5df6a71 load on device 'cuda:0' took 4.66 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5d37b712 3092a2d load on device 'cuda:0' took 185.93 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_5687a5b9 74f86b3 load on device 'cuda:0' took 3.56 ms  (cached)
+Module _update_constraint_efc__locals__kernel_e953547e e953547 load on device 'cuda:0' took 5.96 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_d92a3413 d92a341 load on device 'cuda:0' took 1.74 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_e9f8c963 e9f8c96 load on device 'cuda:0' took 5.83 ms  (cached)
+Module _update_gradient_grad__locals__kernel_87959044 8795904 load on device 'cuda:0' took 1.85 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_5bef8016 d05526c load on device 'cuda:0' took 181.59 ms  (cached)
+Module _solve_done__locals__kernel_a46fb74d a46fb74 load on device 'cuda:0' took 1.98 ms  (cached)
+Module _next_time_builder__locals___next_time_bc454e15 bc454e1 load on device 'cuda:0' took 6.27 ms  (cached)
+   ckpt_40960000  track 0.019  vx +0.002  dist   0.04 m  z 0.29-0.31  up 1.00  (66 s)
+   ckpt_44236800  track 0.019  vx +0.002  dist   0.04 m  z 0.29-0.31  up 1.00  (31 s)
+   ckpt_47513600  track 0.019  vx +0.002  dist   0.04 m  z 0.29-0.32  up 1.00  (28 s)
+   ckpt_50790400  track 0.019  vx +0.001  dist   0.03 m  z 0.29-0.32  up 1.00  (29 s)
+   ckpt_54067200  track 0.018  vx +0.001  dist   0.03 m  z 0.29-0.32  up 1.00  (31 s)
+   ckpt_57344000  track 0.019  vx +0.002  dist   0.04 m  z 0.29-0.32  up 1.00  (30 s)
+   ckpt_60620800  track 0.018  vx +0.001  dist   0.03 m  z 0.29-0.31  up 1.00  (37 s)
+   ckpt_63897600  track 0.018  vx +0.000  dist   0.03 m  z 0.29-0.31  up 1.00  (33 s)
+   ckpt_67174400  track 0.018  vx +0.000  dist   0.03 m  z 0.29-0.31  up 1.00  (32 s)
+       go1_final  track 0.019  vx +0.001  dist   0.02 m  z 0.29-0.31  up 1.00  (30 s)
+done

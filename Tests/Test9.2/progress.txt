@@ -1,0 +1,98 @@
+[04:18] queue started
+[04:18] sweep go1_seed1_e31
+   ckpt_68812800  track 0.967  vx +0.954  dist  18.88 m  z 0.29-0.31  up 1.00  (27 s)
+       go1_final  track 0.968  vx +0.953  dist  18.96 m  z 0.29-0.31  up 1.00  (27 s)
+done
+[04:24] sweep go1_seed2
+   ckpt_68812800  track 0.953  vx +0.916  dist  18.26 m  z 0.29-0.31  up 1.00  (28 s)
+       go1_final  track 0.958  vx +0.928  dist  18.53 m  z 0.29-0.31  up 1.00  (27 s)
+done
+[04:29] sweep go1_seed3
+   ckpt_68812800  track 0.019  vx +0.002  dist   0.05 m  z 0.29-0.33  up 1.00  (28 s)
+       go1_final  track 0.967  vx +0.978  dist  19.57 m  z 0.29-0.31  up 1.00  (27 s)
+done
+[04:34] sweep go1_seed4
+   ckpt_68812800  track 0.955  vx +0.934  dist  18.40 m  z 0.29-0.31  up 1.00  (28 s)
+       go1_final  track 0.952  vx +0.921  dist  18.39 m  z 0.29-0.31  up 1.00  (28 s)
+done
+[04:40] sweep go1_seed5
+   ckpt_68812800  track 0.939  vx +0.934  dist  18.67 m  z 0.29-0.31  up 1.00  (30 s)
+       go1_final  track 0.954  vx +0.946  dist  18.90 m  z 0.29-0.31  up 1.00  (29 s)
+done
+[04:45] sweep go1_seed2_e60
+   ckpt_67174400  track 0.019  vx +0.002  dist   0.05 m  z 0.29-0.32  up 1.00  (34 s)
+       go1_final  track 0.019  vx +0.001  dist   0.03 m  z 0.29-0.32  up 1.00  (29 s)
+done
+[04:51] sweep go1_seed3_e60
+   ckpt_67174400  track 0.018  vx +0.000  dist   0.03 m  z 0.29-0.31  up 1.00  (32 s)
+       go1_final  track 0.019  vx +0.001  dist   0.02 m  z 0.29-0.31  up 1.00  (30 s)
+done
+[04:57] train go1_t92_s2_e60_r5 (seed 2, evals 60, resets 5, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 60
+31:ppo_params.num_resets_per_eval = 5
+59:    seed=2,
+steps=  96665600  reward=26.530  t=0:21:52.225300
+time to jit: 0:01:00.890376
+time to train: 0:20:51.334924
+last step count: 96665600
+[05:19] sweep go1_t92_s2_e60_r5
+   ckpt_67174400  track 0.949  vx +0.914  dist  18.27 m  z 0.29-0.31  up 1.00  (33 s)
+       go1_final  track 0.955  vx +0.931  dist  18.53 m  z 0.29-0.31  up 1.00  (32 s)
+done
+[05:25] train go1_t92_s2_e31_r20 (seed 2, evals 31, resets 20, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 31
+31:ppo_params.num_resets_per_eval = 20
+59:    seed=2,
+steps=  98304000  reward=18.630  t=0:21:34.374783
+time to jit: 0:00:59.608572
+time to train: 0:20:34.766211
+last step count: 98304000
+[05:47] sweep go1_t92_s2_e31_r20
+   ckpt_68812800  track 0.019  vx +0.001  dist   0.04 m  z 0.29-0.32  up 1.00  (27 s)
+       go1_final  track 0.018  vx +0.001  dist   0.02 m  z 0.29-0.32  up 1.00  (28 s)
+done
+[05:53] train go1_t92_s3_e60_r5 (seed 3, evals 60, resets 5, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 60
+31:ppo_params.num_resets_per_eval = 5
+59:    seed=3,
+steps=  96665600  reward=26.607  t=0:21:48.560237
+time to jit: 0:00:58.916660
+time to train: 0:20:49.643577
+last step count: 96665600
+[06:15] sweep go1_t92_s3_e60_r5
+   ckpt_67174400  track 0.020  vx +0.003  dist   0.07 m  z 0.29-0.33  up 1.00  (27 s)
+       go1_final  track 0.971  vx +0.968  dist  19.27 m  z 0.29-0.31  up 1.00  (27 s)
+done
+[06:20] train go1_t92_s3_e31_r20 (seed 3, evals 31, resets 20, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 31
+31:ppo_params.num_resets_per_eval = 20
+59:    seed=3,
+steps=  98304000  reward=18.525  t=0:21:15.346051
+time to jit: 0:00:57.727043
+time to train: 0:20:17.619008
+last step count: 98304000
+[06:42] sweep go1_t92_s3_e31_r20
+   ckpt_68812800  track 0.019  vx +0.003  dist   0.06 m  z 0.29-0.31  up 1.00  (28 s)
+       go1_final  track 0.019  vx +0.001  dist   0.03 m  z 0.29-0.31  up 1.00  (28 s)
+done
+[06:47] train go1_t92_s4_e60 (seed 4, evals 60, resets -, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 60
+58:    seed=4,
+steps=  96665600  reward=14.800  t=0:22:17.905778
+time to jit: 0:00:57.387227
+time to train: 0:21:20.518551
+last step count: 96665600
+[07:10] sweep go1_t92_s4_e60
+   ckpt_67174400  track 0.018  vx -0.000  dist   0.02 m  z 0.29-0.30  up 1.00  (28 s)
+       go1_final  track 0.018  vx -0.000  dist   0.03 m  z 0.29-0.30  up 1.00  (26 s)
+done
+[07:15] train go1_t92_s4_e60_r5 (seed 4, evals 60, resets 5, steps 96_000_000)
+28:ppo_params.num_timesteps = 96_000_000
+29:ppo_params.num_evals = 60
+31:ppo_params.num_resets_per_eval = 5
+59:    seed=4,

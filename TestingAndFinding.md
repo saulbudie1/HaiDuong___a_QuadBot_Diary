@@ -516,6 +516,43 @@ Checked against the paper's PDF (`Reference/`, 8 pages, text extracted with pypd
 - **Reward misleads again:** seed 3 ended at 12.78 and seed 2 at 20.05, yet both give `track` 0.0187.
 - **Caveats:** one rollout per policy, one command, 3 runs at 60 against 6 at 16 or 31. Intermediate values such as 45 are not tried.
 
+### Oct 26 — Test 9.2: is it the reset interval? (flat ground, no video)
+
+**Setup:** the Test 9.1 settings with `num_resets_per_eval` set directly, so the reset interval (every 40 or 80 steps) is chosen and not left to `num_evals`. Seeds 2 and 3 at 60 evaluations with 5 resets (interval 80) and at 31 evaluations with 20 resets (interval 40), plus seed 4 at 60 evaluations with the default (interval 40). Seed 4 with 5 resets stopped at 52.4M steps when the laptop was shut off. About 21 minutes per run. Rolled out with `Scripts/sweep.py` (`go1_final` of seed 1 gave 0.9676 against 0.9678 from `rollout.py`). Full write-up in `Tests/Test9.2/Test9.2.md`.
+
+| Run | Evaluations | Reset every | Final reward | `track` | Result |
+|---|---|---|---|---|---|
+| seed 2 | 60 | 80 | 26.53 | 0.955 | Walks |
+| seed 2 | 31 | 40 | 18.63 | 0.018 | Stands still |
+| seed 3 | 60 | 80 | 26.61 | 0.971 | Walks |
+| seed 3 | 31 | 40 | 18.53 | 0.019 | Stands still |
+| seed 4 | 60 | 40 | 14.80 | 0.018 | Stands still |
+
+**Findings**
+- **The reset interval decides it, not `num_evals`.** Changing only `num_resets_per_eval` turned a failing setup into a walking one and a walking setup into a failing one, for two seeds. Every 80 steps walks, every 40 steps stands, whichever `num_evals` is used.
+- **Each seed keeps its own switch time.** Seed 2 switches at about 50M steps in both of its walking runs, seed 3 late (after 68M) in both of its.
+- **All five runs at 31 evaluations walk at the end** (`track` 0.952 to 0.968). The switch is sudden, between about 49M and 65M steps for four of them. Seed 3's reward passed 21 at 55.7M while it still stood still, so reward misled me again.
+- **Caveats:** the Brax code reading is mine and not checked line by line. Only 40 and 80 were tried, so I do not know where the line is. One rollout per checkpoint, one command. The seed 4 replicate with 5 resets did not finish, so the fix has two seeds, not three. I do not know why short intervals stop the walking.
+- **Process lesson:** my first overnight run was one 3.8-hour chain with the plots and the copy at the end. The laptop was shut off and nothing from the night was in the repo. Now one unit (a run and its sweep) at a time, copied and plotted before the next.
+
+### Oct 27 — Test 9.3: the Test 7 policy on my new sine ground (no training)
+
+**Setup:** `go1_final` of the Test 7 run (flat ground, seed 0, 122.9M steps), command 1 / 0 / 0, one 20 s episode with `PRNGKey(0)` on three grounds, using `Scripts/rollout_terrain.py`. The new ground is `Assets/Grounds/SimpleUniFormRoughGround_1.xml` (100 x 100 m, two crossing sine waves, 0.4 m wavelength, crests 1x to 1.5x; written by Claude from my design). Full write-up in `Tests/Test9.3/Test9.3.md`.
+
+| Ground | `track` | Distance in 20 s | Fell |
+|---|---|---|---|
+| New sine ground | 0.9205 (rerun 0.9199) | 18.58 m | no |
+| New sine ground with the cone hat | 0.9203 | 18.57 m | no |
+| Stock flat | 0.9404 | 19.20 m | no |
+| Stock rough (20 m patch) | 0.887 over the first 612 steps, 0.543 over the whole episode | 17.70 m | yes, at 12.2 s |
+
+**Findings**
+- **The ground loads and simulates in Playground** (Warp backend), and a policy trained on flat ground only walks across it with `track` close to its flat value. The robot stayed upright (never below 0.988).
+- **The stock rough "fall" is the edge of the patch.** The patch is 20 m wide, the robot crosses 10 m from the centre at about 11.8 s and is terminated at 12.2 s. Before that, `track` was 0.887.
+- **The cone hat made no visible difference** (0.9203 against 0.9199), but with one run each I cannot tell "no effect" from a small one. It loads in Playground as a visual-only geom.
+- **Videos and plots** exist for both runs (`Tests/Test9.3/x1.0_y0.0_yaw0.0/`). Rendering this ground takes about 17 minutes per camera (3 parallel renders: about 20 minutes in total).
+- **Caveats:** one path of about 19 m in a 100 m patch, one policy, one command, no training. Nothing here says the ground is trainable or how much GPU memory it needs. Videos spot-checked (one frame each), not watched in full.
+
 ### Insights so far
 1. Judge walking by rollout numbers and video, not by reward.
 2. Plan at least about 100M steps (the official setup is 200M). Standing is a stable local optimum that takes many steps to leave.
@@ -531,8 +568,13 @@ Checked against the paper's PDF (`Reference/`, 8 pages, text extracted with pypd
 12. Training can collapse (seed 1: reward fell to 0.2), so one seed is not enough. Test 9.1 points at the 60-evaluation schedule and not the seed (seed 1 walks at 31 evaluations, seeds 2 and 3 at 60 stand still), in my runs.
 13. `num_evals` changes the training, not only the plot, so keep it the same for runs that are compared. A reward of 12.8 and one of 20.0 can both be a robot that stands still.
 14. The vision in the lab's paper is a tiny simulated depth image (16 by 12), fed to a single dense layer, with no real-robot experiment described (checked in the PDF text).
+15. The reset interval is what separates walking from standing here: every 80 steps walks, every 40 stands, whatever `num_evals` is (Test 9.2, two seeds, both directions).
+16. Run long jobs in small units, each copied to the repo and plotted before the next starts.
+17. A policy trained on flat ground walks on my new sine ground (`track` 0.92 against 0.94). The stock rough terrain is a 20 m patch, so a 20 s walk at 1 m/s leaves it. Whether the new ground can be trained on is not tested.
 
 ### Still unknown
+- Whether the new ground can be trained on (time, GPU memory, whether it learns to walk), and whether the hat has a small effect hidden in the run-to-run spread.
+- Where between a 40 and an 80 step reset interval the line is, and why short intervals stop the walking.
 - Whether seeds 2 to 5 walk, and whether the switch lands in the same window for each (needs rollouts).
 - Why the 60-evaluation schedule stops the walking (the reset-chunk idea is untested), where between 31 and 60 the line is, and what the collapsed robot does (needs a video).
 - Whether `num_envs` 8192 changes the result.

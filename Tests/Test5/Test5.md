@@ -10,6 +10,8 @@
 | Task | `Go1JoystickFlatTerrain` (default config, domain randomization on) |
 | `ppo_params.num_timesteps` | 100,000,000 |
 | `ppo_params.num_evals` | 3 (left over from a short test) |
+| `ppo_params.num_resets_per_eval` | 10 (default) |
+| Reset every | 1,240 steps (computed, see [Test 9.2](../Test9.2/Test9.2.md)) |
 | **Steps actually run** | **101,580,800** (2 epochs of 50,790,400) |
 | `num_envs` | 4096 (Colab runs used 8192) |
 | Hardware | NVIDIA GeForce RTX 5060 Laptop (8 GB), WSL2 Ubuntu 24.04 |

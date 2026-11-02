@@ -12,6 +12,8 @@
 | Task | `Go1JoystickFlatTerrain` (default config) | same | same |
 | `ppo_params.num_timesteps` | 96,000,000 | 96,000,000 | 96,000,000 |
 | `ppo_params.num_evals` | **31** | **60** | **60** |
+| `ppo_params.num_resets_per_eval` | 10 (default) | 10 (default) | 10 (default) |
+| **Reset every** | **80 steps** | **40 steps** | **40 steps** |
 | `seed` (passed to `ppo.train`) | 1 | 2 | 3 |
 | **Steps actually run** | **98,304,000** | **96,665,600** | **96,665,600** |
 | Steps per epoch | 3,276,800 | 1,638,400 | 1,638,400 |
