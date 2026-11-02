@@ -1,7 +1,9 @@
 # Test Log 9.2 — Is it the reset interval? (flat ground, local RTX 5060)
 
 **Date:** 2026-10-26 (queue started 04:18, laptop shut off before it finished); run G on 2026-10-31; plots, copy into the repo and videos on 2026-11-02
-**Result:** In all four pairs the reset interval decided the outcome. Runs that reset every 80 steps **walk** (`track` 0.955 and 0.971) and runs that reset every 40 steps **stand still** (`track` 0.018 to 0.019), whatever `num_evals` is. A later run with a reset every 120 steps (G) also **walks** (`track` 0.959). Five of the six planned runs finished. The sixth (seed 4, 60 evaluations, `num_resets_per_eval` 5) stopped at 52.4M steps when the laptop was shut off and is still not rerun.
+**Result:** In all four pairs the reset interval decided the outcome. Runs that reset every 80 steps **walk** (`track` 0.955 and 0.971) and runs that reset every 40 steps **stand still** (`track` 0.018 to 0.019), whatever `num_evals` is. A later run with a reset every 120 steps (G) also **walks** (`track` 0.959). Five of the six planned runs finished. The sixth (seed 4, 60 evaluations, `num_resets_per_eval` 5) stopped at 52.4M steps when the laptop was shut off. I reran it on 2026-11-02 (F2, in [optional_run](./optional_run/)) and it **walks** (`track` 0.957), while the same seed with the default 40-step interval (E) stands. So the effect now holds for three seeds.
+
+**Minimum for walking, in my runs (flat ground):** a reset every **80 steps or more** (40 stands still, and only multiples of 40 can be set), and enough training: the switch to walking came between about 48M and 65M steps for most seeds and after 68.8M for seed 3, so I plan 100M or more. Both are needed: at a 40-step interval the runs stood still even at 96M.
 
 **Purpose:** [Test 9.1](../Test9.1/Test9.1.md) showed that `num_evals` changes the outcome: seeds 1, 2 and 3 with 60 evaluations did not walk, while the same seeds at 31 walked (seed 1) or had walking curves (seeds 2 to 5 of [Test 9](../Test9/Test9.md)). My reading of Brax `train.py` (not checked line by line) is that each evaluation interval is split into `num_resets_per_eval` chunks and all environments reset at the start of each chunk, so the reset interval is 40 steps times k, where k = ceil(`num_timesteps` / ((`num_evals` - 1) × 163,840 × `num_resets_per_eval`)). At 96M steps that gives 40 steps at 60 evaluations, 80 at 31 and 160 at 16 (Test 7 asked for 120M, which gives 200). Only multiples of 40 are possible. (This line first had 1,638,400 in place of 163,840 × `num_resets_per_eval`, which only agrees at the default of 10 resets; corrected on 2026-11-02 after planning run G.) This test changes `num_resets_per_eval` to set the interval directly, so the evaluation count and the interval are separated:
 - 60 evaluations with `num_resets_per_eval` 5: interval 80 (like the walking e31 runs).
@@ -20,9 +22,11 @@ Same as Test 9.1 (`train_test.py` copied into a new folder per run, step count, 
 | E | 4 | 60 | 10 (default) | 40 | 96,665,600 | 0:00:57 + 0:21:21 | `~/go1_t92_s4_e60` |
 | F | 4 | 60 | 5 | 80 | **stopped at 52,428,800** | none | `~/go1_t92_s4_e60_r5` (33 checkpoints, no `go1_final`) |
 | G | 2 | 60 | **4** | **120** | 115,998,720 | 0:00:57 + 0:23:35 | `~/go1_t92_s2_e60_r4` |
+| F2 | 4 | 60 | 5 | 80 | 96,665,600 | 0:00:58 + 0:20:36 | `~/go1_t92_s4_e60_r5_rerun` (files in [optional_run](./optional_run/)) |
 
 - The step counts match the runs they are compared with, because the number of steps per epoch comes out the same (3.28M at 31 evaluations, 1.64M at 60). Run G is the exception: 60 evaluations with 4 resets gives 1,966,080 steps per epoch, so it ran about 116M steps, which is what the formula predicted (115,998,720).
 - Run G was added after the queue (started 2026-10-31 14:17 with [run_r4.sh](./run_r4.sh), seed 2 so it can be compared with A and B). Its sweep used every second checkpoint (about 3.9M apart), so its onset window is wider than the others.
+- F2 is the rerun of F, on its own, started 2026-11-02 11:52 with [run_seed4.sh](./optional_run/run_seed4.sh) (train, sweep every second checkpoint, two top-view videos, plot against E, copy). It used a new WSL folder, so the half-finished F folder was not touched.
 - Raw logs were filtered while they were written (solver and linesearch warnings removed), so they are small.
 - The queue also swept (rolled out) the 40M to 70M checkpoints of the Test 9 and Test 9.1 runs. All five runs at 31 evaluations (Test 9 seeds 2 to 5 and the Test 9.1 seed 1) walk at the end (`track` 0.952 to 0.968). The onset windows are in the todo and will go into Test9.md.
 
@@ -43,8 +47,10 @@ Command 1 / 0 / 0, one 20 s episode per checkpoint, no video, with `Scripts/swee
 | seed 3 | **D: e31, resets 20** | **40** | **18.53** | **0.019** | stands at every checkpoint |
 | seed 4 | **E: e60 (default)** | 40 | 14.80 (peak 18.59 at 16.4M) | 0.018 | stands at every checkpoint |
 | seed 4 | **F: e60, resets 5** | 80 | stopped at 52.4M (19.3) | not rolled out | not done |
+| seed 4 | **F2: e60, resets 5 (rerun of F)** | **80** | **27.18** | **0.957** | stands up to 60.6M, walks from 63.9M |
 
 - The two runs on the walking side of seed 2 (e31 and A) switch in the same window (49M to 52M), and the two on the walking side of seed 3 both switch late (after about 68M). So far each seed keeps its own onset when the reset interval changes between 40 and 80.
+- The rerun F2 (seed 4) switches between 60.6M and 63.9M. Seed 4 at the default 40 steps (E) stands at every checkpoint.
 - Run G (seed 2, reset every 120) switches later, between 60.9M and 64.9M, against 49M to 52M for the two seed 2 runs at 80. This is one run with a coarser sweep, so I cannot say whether the longer interval delayed it.
 - Reward on the failing side with `num_resets_per_eval` 20 ends near 18.5 to 18.6 (the standing level), not near 0 and not near 27.
 
@@ -55,10 +61,13 @@ Command 1 / 0 / 0, one 20 s episode per checkpoint, no video, with `Scripts/swee
 - This supports the reset-chunk reading from Test 9.1: all environments reset every 80 steps walks, every 40 stands.
 - Seed 4 at 60 evaluations (default resets) also stands still, a fourth seed on the failing side.
 - A reset every 120 steps (G, seed 2) also walks, so nothing breaks just above 80. With the 200-step Test 7 run, the walking side now has 80, 120 and 200.
+- Seed 4 with 5 resets (F2, every 80 steps) walks and the same seed at the default (E, every 40 steps) stands, so the interval effect holds for a third seed.
+- Minimum for walking in these runs: a reset every 80 steps or more, and about 50M to 70M training steps before the switch (earliest about 48M, seed 3 after 68.8M), so 100M or more is a safe budget.
 
 **Not shown:**
 - The Brax code reading is mine and not checked line by line. The runs agree with it, but the step arithmetic is not proof.
-- Two seeds were tested in both directions. The replicate on a third seed (F) did not finish, so the fix has two seeds, not three.
+- Only seeds 2 and 3 were turned in both directions (A to D). Seed 4 was tested once at each setting (E stands at 40 steps, F2 walks at 80), so a third seed agrees but not as a full pair.
+- The onset windows are 3M to 8M wide (checkpoint spacing), and the step needed to walk comes from a handful of seeds, so "about 50M to 70M" is a rough range.
 - One rollout per checkpoint, one command (1 / 0 / 0).
 - The intervals tried were 40, 80 and 120 steps (one seed for 120). The reset interval can only be a multiple of 40, so there is no setting between 40 and 80 and I cannot narrow the line further with `num_resets_per_eval`.
 - I do not know why short chunks stop the walking. A guess is that an episode never gets past 40 steps (0.8 s), so the policy never sees what walking leads to, but I have not tested that.
@@ -85,6 +94,8 @@ I rolled out `ckpt_52428800` of the four seed 3 runs (all four have a checkpoint
 - **Why the body goes below the floor:** the model is `go1_mjx_feetonly.xml`, where only the four foot spheres collide with the floor (the XML says so: "enables collisions for the feet only"). The body has no collision, so a robot that flips falls through the floor and only the foot tips stay visible. The values after the fall (height, upright, `track`) are not meaningful for walking.
 - **The other three stand upright** at 0.29 to 0.32 m. In C I saw a hind leg twitching in the video. The motion data agrees: C has about 40 to 50% more body shaking than the other two (gyro standard deviation 0.053 against 0.035, accelerometer 0.47 against 0.33 and 0.36) and the most movement. C is the run that walks late (after about 68M), so this could be an early sign of the switch, but it is one rollout of one checkpoint and the `track` difference (0.0193 against 0.0185 and 0.0190) is tiny.
 
+**F2 videos (seed 4, 60 evaluations, 5 resets):** two top-view videos of the same run in [optional_run](./optional_run/): `top_x1.0_y0.0_yaw0.0_ckpt_52428800.mp4` (mean `track` 0.0187, stands) and `top_x1.0_y0.0_yaw0.0_go1_final.mp4` (0.959, walks about 18.6 m in 20 s). They differ only in the checkpoint (52.4M against 96.7M steps); the command, camera, start and 20 s are the same. This run switches between 60.6M and 63.9M, so 52.4M is before the switch.
+
 ## What went wrong with the first overnight run
 
 I put the whole night into one chain: seven sweeps, six training runs with a sweep after each, then the plots and the copy into the repo, about 3.8 hours with one command. It went badly, even though five runs finished:
@@ -103,7 +114,7 @@ I put the whole night into one chain: seven sweeps, six training runs with a swe
 ## Next
 
 1. ~~Run the plots and the copy for the five finished units.~~ Done 2026-11-02.
-2. Rerun F (seed 4, 60 evaluations, `num_resets_per_eval` 5) on its own, then sweep it.
+2. ~~Rerun F (seed 4, 60 evaluations, `num_resets_per_eval` 5) on its own, then sweep it.~~ Done 2026-11-02 as F2: walks.
 3. ~~Try one more interval.~~ Done as run G, with `num_resets_per_eval` 4, not 3: by the formula 3 would give a 160-step interval and 4 gives 120.
 4. ~~Write `num_evals`, `num_resets_per_eval` and the interval in every Test setup table.~~ Done 2026-11-02 for Tests 5 to 9.1.
 5. Optional: compute the body-shaking number (gyro and accelerometer spread) for every checkpoint of runs C and the seed 3 e60 run, to see whether it rises before the `track` jump.
@@ -113,7 +124,7 @@ I put the whole night into one chain: seven sweeps, six training runs with a swe
 - Queue script: [run_queue.sh](./run_queue.sh); run G script: [run_r4.sh](./run_r4.sh)
 - Progress logs: [progress.txt](./progress.txt) (the queue, last step reached: `go1_t92_s4_e60_r5` training at 52.4M) and [progress_r4.txt](./progress_r4.txt) (run G)
 - Plots (`track` and reward against steps): [all five e31 seeds](./sweep_e31_seeds.png), [seed 2 runs](./sweep_seed2.png) (including G), [seed 3 runs](./sweep_seed3.png). The seed 4 pair has no plot because F has no sweep.
-- Runs A to E and G: folders `go1_t92_s2_e60_r5` (A), `go1_t92_s2_e31_r20` (B), `go1_t92_s3_e60_r5` (C), `go1_t92_s3_e31_r20` (D), `go1_t92_s4_e60` (E), `go1_t92_s2_e60_r4` (G) in this folder, each with the filtered log, reward graph, `train_test.py`, `sweep_x1.0_y0.0_yaw0.0.csv` and `sweep_out.txt`. Checkpoints stay in WSL (`~/<same folder name>`). Run F has no folder here.
+- Runs A to E and G: folders `go1_t92_s2_e60_r5` (A), `go1_t92_s2_e31_r20` (B), `go1_t92_s3_e60_r5` (C), `go1_t92_s3_e31_r20` (D), `go1_t92_s4_e60` (E), `go1_t92_s2_e60_r4` (G) in this folder, each with the filtered log, reward graph, `train_test.py`, `sweep_x1.0_y0.0_yaw0.0.csv` and `sweep_out.txt`. Checkpoints stay in WSL (`~/<same folder name>`). Run F has no folder here; its rerun F2 is in [optional_run](./optional_run/) (log, reward graph, `train_test.py`, sweep CSV, [sweep_seed4.png](./optional_run/sweep_seed4.png) against E, two videos, progress file and script).
 - Sweeps of the earlier runs: folders `go1_seed1_e31`, `go1_seed2` to `go1_seed5`, `go1_seed2_e60`, `go1_seed3_e60` in this folder (`sweep_x1.0_y0.0_yaw0.0.csv` and `sweep_out.txt`)
 - Videos at 52.4M: `top_ckpt_52428800.mp4` in the four seed 3 folders (see above)
 - Scripts: [sweep.py](../../Scripts/sweep.py), [plot_sweep.py](../../Scripts/plot_sweep.py), written by Claude (see [Declaration.md](../../Declaration.md) once it is updated)

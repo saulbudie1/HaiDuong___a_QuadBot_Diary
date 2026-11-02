@@ -2,6 +2,8 @@
 
 Diary of the Go1 training tests. Times are taken from the screenshot and video file timestamps (UTC+8), so they are approximate.
 
+> **Minimum for walking (so far, flat ground, my runs):** a reset every **80 steps or more** (every 40 steps stands still; only multiples of 40 can be set), and about **50M to 70M training steps** before the switch to walking (earliest about 48M, seed 3 after 68.8M), so I plan for 100M or more. Both are needed: at a 40-step interval the runs stood still even at 96M. Evidence: Test 9.2 (three seeds, one rollout per checkpoint; the reset interval is worked out from my reading of the Brax code, not measured).
+
 ---
 
 ## 2026-10-20
@@ -527,12 +529,15 @@ Checked against the paper's PDF (`Reference/`, 8 pages, text extracted with pypd
 | seed 3 | 60 | 80 | 26.61 | 0.971 | Walks |
 | seed 3 | 31 | 40 | 18.53 | 0.019 | Stands still |
 | seed 4 | 60 | 40 | 14.80 | 0.018 | Stands still |
+| seed 4 (rerun, Nov 2) | 60 | 80 | 27.18 | 0.957 | Walks |
+| seed 2 (Oct 31, 4 resets, about 116M steps) | 60 | 120 | 27.07 | 0.959 | Walks |
 
 **Findings**
 - **The reset interval decides it, not `num_evals`.** Changing only `num_resets_per_eval` turned a failing setup into a walking one and a walking setup into a failing one, for two seeds. Every 80 steps walks, every 40 steps stands, whichever `num_evals` is used.
 - **Each seed keeps its own switch time.** Seed 2 switches at about 50M steps in both of its walking runs, seed 3 late (after 68M) in both of its.
 - **All five runs at 31 evaluations walk at the end** (`track` 0.952 to 0.968). The switch is sudden, between about 49M and 65M steps for four of them. Seed 3's reward passed 21 at 55.7M while it still stood still, so reward misled me again.
-- **Caveats:** the Brax code reading is mine and not checked line by line. Only 40 and 80 were tried, so I do not know where the line is. One rollout per checkpoint, one command. The seed 4 replicate with 5 resets did not finish, so the fix has two seeds, not three. I do not know why short intervals stop the walking.
+- **Caveats:** the Brax code reading is mine and not checked line by line. Only 40, 80 and 120 were tried, and only multiples of 40 can be set, so I cannot place the line between 40 and 80. One rollout per checkpoint, one command. Seed 4 was tested once per setting (stands at 40, walks at 80 in the rerun), so it agrees but is not a full pair. I do not know why short intervals stop the walking.
+- **Later runs (Oct 31 to Nov 2):** a reset every 120 steps also walks (seed 2, `track` 0.959, about 116M steps, switch between 60.9M and 64.9M). The seed 4 rerun walks at 80 (switch between 60.6M and 63.9M). The `track` spike of 0.032 at 52.4M in one seed 3 run was a fall: that checkpoint tipped over and went through the floor, because only the four foot spheres collide in this model.
 - **Process lesson:** my first overnight run was one 3.8-hour chain with the plots and the copy at the end. The laptop was shut off and nothing from the night was in the repo. Now one unit (a run and its sweep) at a time, copied and plotted before the next.
 
 ### Oct 27 — Test 9.3: the Test 7 policy on my new sine ground (no training)
@@ -568,13 +573,13 @@ Checked against the paper's PDF (`Reference/`, 8 pages, text extracted with pypd
 12. Training can collapse (seed 1: reward fell to 0.2), so one seed is not enough. Test 9.1 points at the 60-evaluation schedule and not the seed (seed 1 walks at 31 evaluations, seeds 2 and 3 at 60 stand still), in my runs.
 13. `num_evals` changes the training, not only the plot, so keep it the same for runs that are compared. A reward of 12.8 and one of 20.0 can both be a robot that stands still.
 14. The vision in the lab's paper is a tiny simulated depth image (16 by 12), fed to a single dense layer, with no real-robot experiment described (checked in the PDF text).
-15. The reset interval is what separates walking from standing here: every 80 steps walks, every 40 stands, whatever `num_evals` is (Test 9.2, two seeds, both directions).
+15. The reset interval is what separates walking from standing here: every 80 steps or more walks (80, 120, 200), every 40 stands, whatever `num_evals` is (Test 9.2, two seeds in both directions, a third seed agrees). Minimum for walking: that interval plus about 50M to 70M training steps.
 16. Run long jobs in small units, each copied to the repo and plotted before the next starts.
 17. A policy trained on flat ground walks on my new sine ground (`track` 0.92 against 0.94). The stock rough terrain is a 20 m patch, so a 20 s walk at 1 m/s leaves it. Whether the new ground can be trained on is not tested.
 
 ### Still unknown
 - Whether the new ground can be trained on (time, GPU memory, whether it learns to walk), and whether the hat has a small effect hidden in the run-to-run spread.
-- Where between a 40 and an 80 step reset interval the line is, and why short intervals stop the walking.
+- Why short reset intervals stop the walking (the line is between 40 and 80 steps and cannot be set more finely; my guess is that 40 steps does not leave time to get up to speed, untested).
 - Whether seeds 2 to 5 walk, and whether the switch lands in the same window for each (needs rollouts).
 - Why the 60-evaluation schedule stops the walking (the reset-chunk idea is untested), where between 31 and 60 the line is, and what the collapsed robot does (needs a video).
 - Whether `num_envs` 8192 changes the result.

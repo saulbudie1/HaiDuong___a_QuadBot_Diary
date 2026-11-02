@@ -2,6 +2,8 @@
 
 The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words, only the numbers that matter.
 
+> **Minimum for walking (so far, flat ground, my runs):** a reset every **80 steps or more** (every 40 steps stands still), and about **50M to 70M training steps** before the robot switches to walking, so I plan for 100M or more. Both are needed. From Test 9.2: three seeds, one rollout per checkpoint, and the reset interval is worked out from my reading of the Brax code, not measured.
+
 ---
 
 <details>
@@ -104,7 +106,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 
 **New rule: small pieces.** One unit is one training run plus its own sweep (about 30 minutes). After each unit I copy its small files into the repo and plot it before the next one starts, and I check that `go1_final` exists. No more than two or three units chained. Before leaving I check `tmux ls` and the progress file, and the laptop stays plugged in and awake while a job runs.
 
-**Next.** Plot and copy the five finished runs, rerun seed 4 with resets 5 on its own, and try one more interval (for example a reset about every 120 steps) to see where the line is. Details are in [`Tests/Test9.2/Test9.2.md`](Tests/Test9.2/Test9.2.md).
+**Later (Oct 31 to Nov 2).** I plotted and copied the runs into the repo. I tried one more interval, a reset every 120 steps (seed 2, 60 evaluations, 4 resets, about 116M steps): it walks (`track` 0.959), switching a little later than the other seed 2 runs (61M to 65M against 49M to 52M, one run). I also reran the seed 4 run that died, in `Tests/Test9.2/optional_run/`: with a reset every 80 steps it walks (`track` 0.957), while the same seed at 40 steps stands, so a third seed agrees. A spike in one seed 3 plot turned out to be a fall: that run, at 52.4M steps, tipped over and went through the floor, because only the four feet collide in this model. Details are in [`Tests/Test9.2/Test9.2.md`](Tests/Test9.2/Test9.2.md).
 
 </details>
 
@@ -146,7 +148,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - The motors act like springs at the hinges, and the solver is set to one pass per step on purpose, so the "solver iterations" warnings are normal.
 - In the one run I checked with rollouts, walking started between 57.3M and 65.5M steps, suddenly. Four other seeds have reward curves that suggest about 52 to 59M, but I have not rolled them out. About 80M to 100M steps is a sensible budget, and more barely helps (the reward was flat from 98M to 123M).
 - Training can collapse: seed 1's reward fell to 0.2. Test 9.1 (rolled out Oct 25) suggests it was the 60-evaluation setup and not the seed: seed 1 with 31 evaluations walks (`track` 0.968), and two other seeds with 60 evaluations stand still. Three runs against six, one rollout each, and the reason is not tested.
-- `num_evals` changes the training and not only the plot, so it must stay the same for runs I compare. Test 9.2 suggests the reason is the reset interval: a reset every 80 steps walks and every 40 steps stands, whatever `num_evals` is (two seeds, both directions; my reading of the Brax code, not checked line by line).
+- `num_evals` changes the training and not only the plot, so it must stay the same for runs I compare. Test 9.2 suggests the reason is the reset interval: a reset every 80 steps walks and every 40 steps stands, whatever `num_evals` is (two seeds in both directions, and a third seed and a 120-step run agree; my reading of the Brax code, not checked line by line). Minimum for walking: a reset every 80 steps or more, plus about 50M to 70M training steps.
 - Do not chain a whole night's work into one job. One unit (a run and its sweep) at a time, copied to the repo as it finishes.
 - A reward of 12.8 and a reward of 20.0 can both be a robot that stands still (`track` 0.0187 for both).
 - The vision in the lab's paper is a tiny simulated depth image (read from the PDF text), with no real-robot experiment described.
