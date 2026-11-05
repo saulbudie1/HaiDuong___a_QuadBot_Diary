@@ -1,0 +1,15 @@
+Warp 1.18.0 initialized:
+   CUDA Toolkit 13.4, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5060 Laptop GPU" (8 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/thanh/.cache/warp/1.18.0
+ground: /mnt/c/Users/Admin/Documents/HaiDuong/Assets/Grounds/StairRingsGround_1.xml   command: 0.85 0.0 0.0   checkpoint: go1_final   (201 s)
+mean track: 0.2593
+mean linvel (body frame): [0.18607868 0.00275277 0.0048738 ]
+distance from start: 11.33 m in 65 s
+body height: min -0.255  mean -0.100  max 0.357 m
+upright (1 = level): min -0.980  at the end -0.963
+fell (episode terminated): yes, at step 758 (15.2 s)
+saved /mnt/c/Users/Admin/Documents/HaiDuong/Tests/Test10/staired/motion_x0.85_y0.0_yaw0.0_StairRingsGround_1_go1_final_65s.npz

@@ -1,0 +1,4 @@
+speed,on_plateau,arrive_s,farthest_d,highest_z,min_upright,ended
+0.75,False,,11.56,0.74,0.969,standing/stuck
+0.8,False,,16.77,2.13,0.968,standing/stuck
+0.85,True,61.3,28.13,2.53,0.97,still going

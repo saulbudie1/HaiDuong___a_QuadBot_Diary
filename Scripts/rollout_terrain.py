@@ -4,6 +4,7 @@
     python rollout_terrain.py rough 1 0 0 [checkpoint]      # stock rough terrain
     python rollout_terrain.py /path/to/ground_scene.xml 1 0 0 [checkpoint]   # any scene XML (a custom ground)
     add --cone to put the visual-only cone hat (Assets/Decos/go1_mjx_feetonly_cone.xml) on the robot; output names then end in _cone
+    add --seconds 60 for a longer episode than the default 20 s (1000 steps); output names then end in _60s
 
 The custom scene is loaded by pointing Playground's task name "rough_custom" at the XML (name starts with "rough", so it
 gets the larger contact buffers the stock rough task gets). The policy network is built from the flat task's PPO settings,
@@ -29,6 +30,11 @@ out_dir = "."
 if "--out" in argv:  # --out DIR: where the motion data is saved (default: the current folder)
     i = argv.index("--out")
     out_dir = argv[i + 1]
+    del argv[i:i + 2]
+seconds = None
+if "--seconds" in argv:  # --seconds N: run N seconds instead of the default episode length (1000 steps = 20 s)
+    i = argv.index("--seconds")
+    seconds = float(argv[i + 1])
     del argv[i:i + 2]
 cone = "--cone" in argv
 if cone:
@@ -90,7 +96,8 @@ rng = jax.random.PRNGKey(0)
 state = jit_reset(rng)
 state.info["command"] = command
 track, linvel, pos, quat, done, gyro, accel, qpos = [], [], [], [], [], [], [], []
-for _ in range(env_cfg.episode_length):
+n_steps = env_cfg.episode_length if seconds is None else int(round(seconds / float(env.dt)))
+for _ in range(n_steps):
     act_rng, rng = jax.random.split(rng)
     ctrl, _ = inference_fn(state.obs, act_rng)
     state = jit_step(state, ctrl)
@@ -120,7 +127,7 @@ print("fell (episode terminated):", "no" if first_done < 0 else f"yes, at step {
 import os
 os.makedirs(out_dir, exist_ok=True)
 tag = ground if ground in ("flat", "rough") else os.path.splitext(os.path.basename(ground))[0]
-base = f"x{x_vel}_y{y_vel}_yaw{yaw_vel}_{tag}_{ckpt}" + ("_cone" if cone else "")
+base = f"x{x_vel}_y{y_vel}_yaw{yaw_vel}_{tag}_{ckpt}" + ("_cone" if cone else "") + ("" if seconds is None else f"_{seconds:g}s")
 # same keys as rollout.py's motion file (plot_motion.py and plot_trail.py read it), plus done and qpos
 np.savez(f"{out_dir}/motion_{base}.npz", dt=dt, command=np.array([x_vel, y_vel, yaw_vel]), ckpt=ckpt,
          pos=pos, quat=quat, linvel=linvel, gyro=gyro, accel=accel, track=track, done=done, qpos=qpos)

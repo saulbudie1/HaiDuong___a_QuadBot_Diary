@@ -2,19 +2,18 @@
 
 <div align="center">
 
-### Latest test: [Test 9.3](Tests/Test9.3/Test9.3.md)
-**The Test 7 policy, trained on flat ground only, walks across a new 100 m sine-wave ground with speed tracking 0.92 (0.94 on flat ground), here wearing a visual-only cone hat. No training on this ground yet.**
+### Latest test: [Test 10](Tests/Test10/Test10.md)
+**The Test 7 policy, trained on flat ground only, is sent up a 15° ramp it has never seen. At the slowest command that gets it there (0.85 m/s) it climbs slowly and in stalls, reaching the first plateau at about 63 s of a 65 s run. No training on slopes.**
 
-<a href="Tests/Test9.3/Test9.3.md"><img src="Tests/Test9.3/preview/track_cone.gif" width="288" alt="Test 9.3 with the cone hat, tracking-camera view"></a>
-<a href="Tests/Test9.3/Test9.3.md"><img src="Tests/Test9.3/preview/top_cone.gif" width="288" alt="Test 9.3 with the cone hat, top view"></a>
-<br><sub>tracking view and top view &nbsp;·&nbsp; command x = 1 (forward 1 m/s) &nbsp;·&nbsp; mean speed tracking 0.920 &nbsp;·&nbsp; with the cone hat (no effect on the physics) &nbsp;·&nbsp; first 6 s of a 20 s run</sub>
-<br><sub>full videos: <a href="Tests/Test9.3/x1.0_y0.0_yaw0.0/side_x1.0_y0.0_yaw0.0_SimpleUniFormRoughGround_1_go1_final_cone.mp4">side</a> &nbsp;·&nbsp; <a href="Tests/Test9.3/x1.0_y0.0_yaw0.0/top_x1.0_y0.0_yaw0.0_SimpleUniFormRoughGround_1_go1_final_cone.mp4">top</a> &nbsp;·&nbsp; <a href="Tests/Test9.3/x1.0_y0.0_yaw0.0/track_x1.0_y0.0_yaw0.0_SimpleUniFormRoughGround_1_go1_final_cone.mp4">track</a></sub>
+<a href="Tests/Test10/Test10.md"><img src="Tests/Test10/preview/track_slanted.gif" width="288" alt="Test 10, Go1 reaching the foot of the 15 degree ramp, tracking-camera view"></a>
+<br><sub>tracking view &nbsp;·&nbsp; command x = 0.85 (forward 0.85 m/s) &nbsp;·&nbsp; 13 s to 19 s of a 65 s run: the robot reaches the foot of the ramp at about 15 s and starts to climb</sub>
+<br><sub>full videos: <a href="Tests/Test10/slanted/side_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">side</a> &nbsp;·&nbsp; <a href="Tests/Test10/slanted/top_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">top</a> &nbsp;·&nbsp; <a href="Tests/Test10/slanted/track_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">track</a></sub>
 
-<a href="Tests/Test9.3/Test9.3.md"><img src="Tests/Test9.3/x1.0_y0.0_yaw0.0/motion_x1.0_y0.0_yaw0.0_SimpleUniFormRoughGround_1_go1_final_cone.png" width="560" alt="Test 9.3, distance, velocity and rotation for command 1, 0, 0"></a>
-<br><sub>distance, velocity vs command and rotation &nbsp;·&nbsp; command x = 1, y = 0, yaw = 0 &nbsp;·&nbsp; 18.6 m in 20 s</sub>
+<a href="Tests/Test10/Test10.md"><img src="Tests/Test10/slanted/motion_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.png" width="560" alt="Test 10, distance, velocity and rotation for command 0.85, 0, 0 on the ramp ground"></a>
+<br><sub>distance, velocity vs command and rotation &nbsp;·&nbsp; command x = 0.85, y = 0, yaw = 0 &nbsp;·&nbsp; 26.6 m in 65 s, about 0.2 m/s on the ramp itself</sub>
 
-<a href="Tests/Test9.3/Test9.3.md"><img src="Tests/Test9.3/x1.0_y0.0_yaw0.0/trail_x1.0_y0.0_yaw0.0_SimpleUniFormRoughGround_1_go1_final_cone.png" width="480" alt="Test 9.3, bird's-eye trail for command 1, 0, 0"></a>
-<br><sub>bird's-eye trail: body centre and head tip (drawn 2 m ahead), start to end &nbsp;·&nbsp; a nearly straight 18.6 m line</sub>
+<a href="Tests/Test10/Test10.md"><img src="Tests/Test10/slanted/trail_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.png" width="480" alt="Test 10, bird's-eye trail for command 0.85, 0, 0 on the ramp ground"></a>
+<br><sub>bird's-eye trail: body centre and head tip (drawn 2 m ahead), start to end</sub>
 
 <br>
 
@@ -29,8 +28,8 @@
 
 <br>
 
-<a href="Tests/Test9.3/Test9.3.md"><img src="Assets/Grounds/SimpleUniFormRoughGround_1_preview_closeup.png" width="560" alt="The new sine-wave ground with a Go1-sized stand-in"></a>
-<br><sub>the new ground: two crossing sine waves, 0.4 m wavelength, crest heights from 1x to 1.5x, 100 x 100 m &nbsp;·&nbsp; the red box is a Go1-sized stand-in for scale &nbsp;·&nbsp; written by Claude, see <a href="Declaration.md">Declaration</a></sub>
+<a href="Tests/Test10/Test10.md"><img src="Assets/Grounds/SlopeRingsGround_1_preview_closeup.png" width="560" alt="The new ramp-ring ground with a Go1-sized stand-in"></a>
+<br><sub>the new ground: square rings around a flat middle, ramps of 15°, 25° and 35° with flat plateaus between, 100 x 100 m &nbsp;·&nbsp; a stair version of it made the robot fall at 15.2 s &nbsp;·&nbsp; written by Claude, see <a href="Declaration.md">Declaration</a></sub>
 
 </div>
 

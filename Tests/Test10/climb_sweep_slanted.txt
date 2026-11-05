@@ -1,0 +1,16 @@
+Warp 1.18.0 initialized:
+   CUDA Toolkit 13.4, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5060 Laptop GPU" (8 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/thanh/.cache/warp/1.18.0
+ speed  on plateau  arrived at  farthest d  highest z  min upright          ended
+  0.30       False        None       10.16       0.38        0.976 standing/stuck   (190 s)
+  0.50       False        None       10.24       0.39        0.973 standing/stuck   (151 s)
+  0.70       False        None       11.12       0.62        0.970 standing/stuck   (154 s)
+  0.90        True        44.9       28.15       2.56        0.969    still going   (147 s)
+  1.10        True        27.6       28.16       2.56        0.968    still going   (152 s)
+  1.30        True        23.3       28.49       2.56        0.967   fell at 78 s   (154 s)
+  1.50        True        21.4       28.21       2.56        0.968   fell at 31 s   (154 s)
+saved climb_sweep_slanted.csv
