@@ -624,6 +624,52 @@ No speed got past the 25° ring.
 - **Heading drift:** yaw drifts to about +85° in 25 s with command yaw 0, so the path curves.
 - **Caveats:** one run, one start. Track video checked by frames, `top` and `side` not watched. The fall position is the body centre, not the feet.
 
+### Nov 8 — Test 10.3: trained on the ramp ground, then Test 10.2's rollout again
+
+**Training:** `Scripts/train_terrain.py` (written by Claude), run by `Tests/Test10.3/train_slanted.sh` in `~/go1_slanted`. Ground `SlopeRingsGround_1.xml` loaded under the task name `rough_custom`, feet-only robot, PPO settings of `Go1JoystickRoughTerrain`, stock domain randomization, `num_timesteps` 120M, `num_evals` 16, `num_envs` 4096, seed 0 (the Test 7 settings). Smoke run first (16.4M steps, 5:06, 4,540 MiB). **Full run: 122,880,000 steps, jit 1:03, training 24:44, peak 4,574 MiB, no crash.** The floor is geom 0 as the randomizer assumes (the script checks). Log `Tests/Test10.3/train.log`, plot `reward_plot.png`.
+
+| Steps | 24.6M | 49.2M | 65.5M | 73.7M | 98.3M | 122.9M |
+|---|---|---|---|---|---|---|
+| Test 7, flat | 19.28 | 19.19 | 22.41 | 24.41 | 26.70 | 26.94 |
+| Test 10.3, ramp ground | 19.49 | 19.31 | 20.57 | 22.21 | 24.29 | 25.74 |
+
+**Rollout:** as Test 10.2 (command 1.5 / 0.8 / 0, 65 s, ramp ground, `PRNGKey(0)`), `Tests/Test10.3/run_test10_3.sh`, write-up `Tests/Test10.3/Test10.3.md`.
+
+| | Test 10.2 (flat-trained) | Test 10.3 (ramp-trained) |
+|---|---|---|
+| Fell | yes, step 1340 (26.8 s) | yes, step 1156 (23.1 s) |
+| Mean `track` | 0.243 | 0.197 |
+| Distance from start | 29.97 m | 28.02 m |
+| Crossed the 15° ramp (d = 18 m) | 16.3 s | 15.7 s |
+| Body speed on the 15° ramp (fwd / side) | 0.85 / 0.54 m/s | 0.86 / 0.47 m/s |
+| Reached the 25° ramp (d = 28 m) | 25.5 s | 22.0 s |
+| Slowest forward speed | -0.18 m/s | -1.68 m/s |
+
+**Findings**
+- **No gain from training on this ground, as it is.** Same speeds on the flat, the 15° ramp and the plateau within about 0.1 m/s, and the 25° ramp still ends in a fall, 3.7 s earlier. One seed, so I do not read the difference as worse.
+- **A different fall:** it climbed about 0.4 m up the 25° ramp (body height 2.64 m against a standing 2.46 m on the plateau), slid backwards (forward speed -1.68 m/s) and flipped; the flat-trained one stalled at the foot and tumbled sideways. Both on their back (upright -0.98) until 65 s.
+- **My guess, untested:** every training episode starts within 0.5 m of the centre and lasts 20 s, so the 25° ring (28 m out) may almost never be reached. Not measured.
+- **Caveats:** one training run, one rollout, one command. Training rewards are on different grounds. Track video checked by frames, `top` and `side` not watched.
+
+### Nov 8 — Test 10.4: the ramp-trained policy with command 1.5 / 0 / 0
+
+**Setup:** as Test 10.3 (policy `~/go1_slanted/go1_final`, `SlopeRingsGround_1`, 65 s, `PRNGKey(0)`), command **1.5 / 0 / 0** instead of 1.5 / 0.8 / 0, to see if the sideways part was the problem. Script `Tests/Test10.4/run_test10_4.sh`, write-up `Tests/Test10.4/Test10.4.md`.
+
+| | Test 10.2 (flat-trained, 1.5 / 0.8) | Test 10.3 (ramp-trained, 1.5 / 0.8) | Test 10.4 (ramp-trained, 1.5 / 0) |
+|---|---|---|---|
+| Fell | step 1340 (26.8 s) | step 1156 (23.1 s) | step 1316 (26.3 s) |
+| Mean `track` | 0.243 | 0.197 | 0.239 |
+| Time on the 15° ramp (d 10 to 18 m) | 9.1 s | 8.5 s | 10.0 s |
+| Forward speed on flat / 15° ramp / plateau | 1.49 / 0.85 / 1.51 | 1.45 / 0.86 / 1.46 | 1.44 / 0.86 / 1.44 m/s |
+| Reached the 25° ramp (d = 28 m) | 25.5 s | 22.0 s | 25.0 s |
+| Highest body height | 2.52 m | 2.64 m | 2.53 m |
+
+**Findings**
+- **The sideways command is not what stops the 25° ramp.** With y = 0 the policy stalls at the foot (25.0 s), crouches (forward speed 1.43 at 24 s, 0.95 at 25 s, -0.35 at 26 s) and topples at 26.3 s, then lies on its back (upright -0.987) until 65 s. Test 10.3's earlier fall (23.1 s, backward slide) looks like the odd one out.
+- **Forward speed on the 15° ramp is about 0.85 m/s in all three 1.5-command runs**, flat-trained or ramp-trained, with or without the sideways command. In Test 10 the flat-trained policy at forward command 0.85 managed about 0.4 m/s moving on the same ramp, so the ramp seems to take roughly half the forward command (four runs, a pattern and not a measurement).
+- **The ring-distance time on the ramp is longer at y = 0** (10.0 s against 8.5 s) only because the sideways speed (0.47 m/s) added to the speed along the ring normal in 10.3.
+- **Caveats:** one run, one start. Track video checked by frames, `top` and `side` not watched.
+
 ### Insights so far
 1. Judge walking by rollout numbers and video, not by reward.
 2. Plan at least about 100M steps (the official setup is 200M). Standing is a stable local optimum that takes many steps to leave.
@@ -645,10 +691,13 @@ No speed got past the 25° ring.
 18. The flat-trained policy climbs a 15° ramp at 0.85 m/s or faster, slowly and in stop-and-go, but falls at the first 15° stair and does not get up (Test 10, one run each). Same average angle, so the steps matter, not the angle.
 19. Raising the command far above the trained range does not give more speed: 2 / 2 / 0 made the policy fall within 1.4 s on flat ground (Test 10.1, one run, both inputs out of range at once).
 20. At the trained maximum (1.5 / 0.8 / 0) the policy follows the command and crosses a 15° ramp in about 9 s, against about 46 s at 0.85 / 0 / 0. The 25° ramp still makes it fall (Test 10.2, one run).
+21. A policy trained on the ramp ground itself (120M steps, 26 min, 4.5 GB, reward 25.7) did not do better on the 25° ramp than the flat-trained one at 1.5 / 0.8 / 0 (Test 10.3, one seed). Every episode starts in the flat middle, so the 25° ring may rarely be seen in training (untested).
+22. Removing the sideways command (1.5 / 0 / 0, ramp-trained policy) does not change the 25° result: it stalls at the foot at 25.0 s and falls at 26.3 s (Test 10.4, one run). Forward speed on the 15° ramp was about 0.85 m/s in all three 1.5-command runs. The 25° ramp has beaten every policy and command tried so far.
 
 ### Still unknown
 - Whether x = 2 or y = 2 causes the Test 10.1 fall, and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
 - Whether the faster 15° ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
+- How often training episodes on the ramp ground reach the rings, and whether random start points or a slope curriculum would let a policy learn the 25° ramp.
 - Why it falls on the stairs (riser, step height or speed), whether another speed gets up them, and whether the trunk sinking after a fall is the feet-only collision file (Test 10, none tested).
 - Whether the new ground can be trained on (time, GPU memory, whether it learns to walk), and whether the hat has a small effect hidden in the run-to-run spread.
 - Why short reset intervals stop the walking (the line is between 40 and 80 steps and cannot be set more finely; my guess is that 40 steps does not leave time to get up to speed, untested).
@@ -662,4 +711,4 @@ No speed got past the 25° ring.
 - Whether the constant solver warnings slow training.
 
 ### Next
-See `todo.md` for the running list. The first items: roll out `ckpt_57344000` and `ckpt_65536000` on 1 / 0 / 0, a full checkpoint sweep, and the Test 5 policy on y = -0.8 and -0.9.
+See `todo.md` for the running list. Current first items: measure how often training episodes on the ramp ground reach the 15° and 25° rings, then (if the 25° ring is rarely seen) train with random start points or a growing slope; split the sideways and forward parts of the 1.5 / 0.8 and 2 / 2 commands; and a plateau-start sweep on the 25° ramp.

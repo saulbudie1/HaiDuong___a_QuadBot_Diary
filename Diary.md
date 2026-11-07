@@ -131,7 +131,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 
 ---
 
-<details open>
+<details>
 <summary><h2>Nov 4 to 7 — Ramps and stairs with the flat-ground policy (Tests 10, 10.1, 10.2)</h2></summary>
 
 **What I did.** No training. I took the Test 7 policy (flat ground only) and put it on two new 100 x 100 m grounds I described and Claude generated: square rings with a 15° ramp, a flat plateau, a 25° ramp and so on, once as smooth ramps and once as stairs with the same average angle. It starts on the flat middle with the command held at 0.85 / 0 / 0 for 65 s.
@@ -149,6 +149,23 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 **Test 10.2 (Nov 7, command 1.5 / 0.8 / 0).** Next I used the biggest command the policy was trained on (x 1.5, y 0.8; I checked `command_config.a = [1.5, 0.8, 1.2]` in the Playground code). This time it walked, and fast: 1.49 m/s forward and 0.75 m/s sideways on the flat middle. It crossed the 15° ramp in about 9 s (Test 10 at 0.85 took about 46 s) without stopping, then ran the plateau at full speed. At 25.5 s it reached the foot of the 25° ramp, slowed to a stop, tumbled at 26.8 s and lay on its back for the other 38 s. So 2 / 2 / 0 failed because it was out of range, not because it was fast. The 25° ramp has now beaten the policy at every command I tried. Details in [`Tests/Test10.2/Test10.2.md`](Tests/Test10.2/Test10.2.md).
 
 **Next.** Try a faster speed on the stairs (0.85 was picked for the ramp, and the ramp is much easier at 1.5 / 0.8), split x = 2 from y = 2, and split the x and y parts of the 1.5 / 0.8 run (1.5 / 0 / 0).
+
+</details>
+
+---
+
+<details open>
+<summary><h2>Nov 8 — First policy trained on the ramp ground (Tests 10.3 and 10.4)</h2></summary>
+
+**What "train on slopes" means.** Until now only Test 8 was trained on something other than flat ground (the stock rough patch). Tests 9.3 to 10.2 did not train anything: they ran the flat-trained Test 7 policy on my new grounds. Training on a ground is the same PPO and reward as before, only the ground the simulated robots stand on is different. I trained the first one on the ramp ground (`SlopeRingsGround_1`) with the Test 7 settings (120M steps, 16 evaluations, 4096 environments, seed 0). The script is `Scripts/train_terrain.py`, written by Claude.
+
+**Training.** A 16.4M-step smoke run came first, to check the 1,000,000-cell ground fits in 8 GB (peak 4.5 GB, it did). The full run took about 26 minutes, 122.88M steps, reward 25.7 against 26.9 for the flat run, with the same plateau at 19 to 20 and a climb after about 55M steps. No out-of-memory crash this time.
+
+**Test 10.3.** Same rollout as Test 10.2 (command 1.5 / 0.8 / 0, 65 s, ramp ground). It crossed the 15° ramp in 8.5 s (flat-trained: 9.1 s) and still failed on the 25° ramp: it walked about 0.4 m up it, slid backwards and flipped at 23.1 s (flat-trained: stalled at the foot and tumbled at 26.8 s). So training on this ground did not get it up the 25° ramp. One seed and one run, so I do not read the 3.7 s difference as worse. My guess, not tested: every training episode starts in the flat middle (within 0.5 m of the centre), so the 25° ring is rarely seen. Details in [`Tests/Test10.3/Test10.3.md`](Tests/Test10.3/Test10.3.md).
+
+**Test 10.4 (command 1.5 / 0 / 0).** To see whether the sideways part of the command was the problem, I ran the same ramp-trained policy with y = 0. It did the same thing: 1.44 m/s on the flat, 0.86 m/s forward over the 15° ramp (10.0 s, no stops), full speed on the plateau, then it stalled at the foot of the 25° ramp at 25.0 s, crouched and toppled at 26.3 s. That is almost exactly when the flat-trained policy fell in Test 10.2 (26.8 s), so the 23.1 s of Test 10.3 looks like the odd one. Forward speed on the 15° ramp was about 0.85 m/s in all three 1.5-command runs, flat-trained or ramp-trained. The 25° ramp has now beaten every policy and command I tried. Details in [`Tests/Test10.4/Test10.4.md`](Tests/Test10.4/Test10.4.md).
+
+**Next.** Measure how far training episodes actually get on this ground (the trained policy with random commands, count how many reach 10, 18 and 28 m). If the 25° ring is almost never reached, train on a ground with random start points or a growing slope.
 
 </details>
 
@@ -180,6 +197,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - A visual-only hat on the trunk made no visible difference to a rollout (`track` 0.9203 against 0.9199, one run each).
 - Rendering the 4-million-cell ground costs about 17 minutes per camera. Three parallel renders took about 20 minutes in total.
 - Commands well above the trained range do not give more speed: x 2 and y 2 together made the policy fall within 1.4 s on flat ground (Test 10.1, one run).
+- Training on the ramp ground (120M steps, about 26 min, 4.5 GB of GPU memory) works and reaches reward 25.7, but the policy still fell on the 25° ramp at 1.5 / 0.8 / 0 (Test 10.3, one seed) and at 1.5 / 0 / 0 (Test 10.4). It crossed the 15° ramp as fast as the flat-trained one, at about 0.85 m/s forward in all three 1.5-command runs.
 - At the trained maximum (1.5 / 0.8 / 0) the policy walks at full command and crosses the 15° ramp in about 9 s, without stopping. It still falls at the foot of the 25° ramp (26.8 s, Test 10.2, one run).
 - The flat-trained Test 7 policy climbs a 15° ramp only at 0.85 m/s or faster, and then slowly and in stop-and-go (about 0.4 m/s moving, 46 s for 8 m). It fell on 15° stairs at the first step (15.2 s) and never got up (Test 10, one run each, 0.85 m/s).
 
@@ -198,6 +216,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Whether the hat has a small effect hidden in the run-to-run spread (needs repeated runs), and whether the huge heightfield is the reason for the slow rendering.
 - Whether x = 2 or y = 2 causes the fall in Test 10.1 (both were out of range), and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
 - Whether the faster ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
+- How often training episodes on the ramp ground reach the 15° and 25° rings (my guess is the 25° ring almost never), and whether random start points or a slope curriculum would let the policy learn it.
 - Why it falls on the stairs (the steep riser, the step height or the speed), whether another speed gets up them, and whether the trunk sinking under the ground after a fall comes from the feet-only collision file (Test 10, none of these tested).
 - Whether the full 111M steps on rough ground would change the result (the reward was still rising), and why the GPU ran out of memory at epoch 14.
 
