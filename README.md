@@ -2,18 +2,20 @@
 
 <div align="center">
 
-### Latest test: [Test 10](Tests/Test10/Test10.md)
-**The Test 7 policy, trained on flat ground only, is sent up a 15° ramp it has never seen. At the slowest command that gets it there (0.85 m/s) it climbs slowly and in stalls, reaching the first plateau at about 63 s of a 65 s run. No training on slopes.**
+### Latest test: [Test 10.2](Tests/Test10.2/Test10.2.md)
+**The Test 7 policy, trained on flat ground only, is given the biggest command it was trained on (1.5 m/s forward, 0.8 m/s sideways) and sent over the ramp rings. It crosses the 15° ramp in about 9 s (0.85 m/s in Test 10 took about 46 s), runs the plateau at full speed, then stalls at the foot of the 25° ramp and tumbles at 26.8 s. No training on slopes.**
 
-<a href="Tests/Test10/Test10.md"><img src="Tests/Test10/preview/track_slanted.gif" width="288" alt="Test 10, Go1 reaching the foot of the 15 degree ramp, tracking-camera view"></a>
-<br><sub>tracking view &nbsp;·&nbsp; command x = 0.85 (forward 0.85 m/s) &nbsp;·&nbsp; 13 s to 19 s of a 65 s run: the robot reaches the foot of the ramp at about 15 s and starts to climb</sub>
-<br><sub>full videos: <a href="Tests/Test10/slanted/side_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">side</a> &nbsp;·&nbsp; <a href="Tests/Test10/slanted/top_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">top</a> &nbsp;·&nbsp; <a href="Tests/Test10/slanted/track_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">track</a></sub>
+<a href="Tests/Test10.2/Test10.2.md"><img src="Tests/Test10.2/preview/track_slanted.gif" width="288" alt="Test 10.2, Go1 walking onto the 15 degree ramp at command 1.5 / 0.8, tracking-camera view"></a>
+<br><sub>tracking view &nbsp;·&nbsp; command x = 1.5, y = 0.8 &nbsp;·&nbsp; 6 s to 12 s of a 65 s run: the robot reaches the foot of the ramp at about 7 s and walks up it</sub>
+<br><sub>full videos: <a href="Tests/Test10.2/slanted/side_x1.5_y0.8_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">side</a> &nbsp;·&nbsp; <a href="Tests/Test10.2/slanted/top_x1.5_y0.8_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">top</a> &nbsp;·&nbsp; <a href="Tests/Test10.2/slanted/track_x1.5_y0.8_yaw0.0_SlopeRingsGround_1_go1_final_65s.mp4">track</a></sub>
 
-<a href="Tests/Test10/Test10.md"><img src="Tests/Test10/slanted/motion_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.png" width="560" alt="Test 10, distance, velocity and rotation for command 0.85, 0, 0 on the ramp ground"></a>
-<br><sub>distance, velocity vs command and rotation &nbsp;·&nbsp; command x = 0.85, y = 0, yaw = 0 &nbsp;·&nbsp; 26.6 m in 65 s, about 0.2 m/s on the ramp itself</sub>
+<a href="Tests/Test10.2/Test10.2.md"><img src="Tests/Test10.2/slanted/motion_x1.5_y0.8_yaw0.0_SlopeRingsGround_1_go1_final_65s.png" width="560" alt="Test 10.2, distance, velocity and rotation for command 1.5, 0.8, 0 on the ramp ground"></a>
+<br><sub>distance, velocity vs command and rotation &nbsp;·&nbsp; command x = 1.5, y = 0.8, yaw = 0 &nbsp;·&nbsp; speed drops on the 15° ramp (7 s to 16 s) but never stops, full speed on the plateau, then the fall at 26.8 s</sub>
 
-<a href="Tests/Test10/Test10.md"><img src="Tests/Test10/slanted/trail_x0.85_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.png" width="480" alt="Test 10, bird's-eye trail for command 0.85, 0, 0 on the ramp ground"></a>
+<a href="Tests/Test10.2/Test10.2.md"><img src="Tests/Test10.2/slanted/trail_x1.5_y0.8_yaw0.0_SlopeRingsGround_1_go1_final_65s.png" width="480" alt="Test 10.2, bird's-eye trail for command 1.5, 0.8, 0 on the ramp ground"></a>
 <br><sub>bird's-eye trail: body centre and head tip (drawn 2 m ahead), start to end</sub>
+
+<sub>The same series: <a href="Tests/Test10/Test10.md">Test 10</a> (command 0.85 / 0 / 0, slow and in stalls up the 15° ramp, fell on the stairs) &nbsp;·&nbsp; <a href="Tests/Test10.1/Test10.1.md">Test 10.1</a> (command 2 / 2 / 0, above the trained range, fell in 1.4 s on flat ground)</sub>
 
 <br>
 
