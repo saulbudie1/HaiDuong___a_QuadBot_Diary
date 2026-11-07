@@ -558,6 +558,72 @@ Checked against the paper's PDF (`Reference/`, 8 pages, text extracted with pypd
 - **Videos and plots** exist for both runs (`Tests/Test9.3/x1.0_y0.0_yaw0.0/`). Rendering this ground takes about 17 minutes per camera (3 parallel renders: about 20 minutes in total).
 - **Caveats:** one path of about 19 m in a 100 m patch, one policy, one command, no training. Nothing here says the ground is trainable or how much GPU memory it needs. Videos spot-checked (one frame each), not watched in full.
 
+### Nov 4 — Test 10: the Test 7 policy on a ramp ground and a stair ground (no training)
+
+**Setup:** `go1_final` of the Test 7 run (flat ground only), `go1_mjx_feetonly.xml` (only the feet collide), command **0.85 / 0 / 0** held for 65 s (3,250 steps), same start (`PRNGKey(0)`) on both grounds, `Scripts/rollout_terrain.py`. Grounds from `Scripts/make_terrain.py` (written by Claude from my layout): 100 x 100 m square rings, flat to d = 10 m, a 15° ring to 18 m, a plateau to 28 m, a 25° ring to 35 m, a plateau to 45 m, a 35° ring to 50 m. The stairs have the same average angles (0.40 m tread and 0.107 m rise on the 15° ring). Full write-up in `Tests/Test10/Test10.md`.
+
+**Step 1, climb search** (ramp ground, 80 s each; arrived = d >= 18.5 m, z >= 2 m above the start, upright):
+
+| Command (m/s) | 0.30 to 0.75 | 0.80 | **0.85** | 0.90 | 1.10 | 1.30 | 1.50 |
+|---|---|---|---|---|---|---|---|
+| Result | stuck at the foot | still climbing at 80 s | **arrived at 61.3 s** | 44.9 s | 27.6 s | 23.3 s, fell at 78 s | 21.4 s, fell at 31 s |
+
+No speed got past the 25° ring.
+
+**Step 2, the two 65 s runs**
+
+| | Ramp (`slanted`) | Stairs (`staired`) |
+|---|---|---|
+| Fell | no | **yes, at step 758 (15.2 s)** |
+| Mean `track` | 0.483 | 0.259 |
+| Distance from start | 26.64 m | 11.33 m |
+| First plateau (d = 18 m) | reached at 60.5 s | never |
+| Upright | min 0.970 | min -0.980, on its back from 15 s |
+
+**Findings**
+- **Ramp:** about 0.8 m/s on the flat middle, about 0.4 m/s while moving on the 15° ramp, with stops of 1 to 3 s (25.1 to 26.3 s, 38.0 to 41.4 s, 48.2 to 51.4 s). It crossed the 8 m of ramp in about 46 s, then went back to 0.8 m/s on the plateau. Heading stayed within 6°.
+- **Stairs:** it reached the first riser at 14.7 s at full speed, spiked to 1.5 m/s while turning about -235° in about 1 s, and was terminated at 15.2 s. After that nothing moved for 50 s (speed 0.00, body height -0.23 m, upright -0.98).
+- **Same average angle, opposite outcome,** so the angle is not what stops it. The policy has no height input and never saw a slope or a step.
+- **The track videos agree with the numbers.** Ramp: a steady trot, ramp edge visible at about 12 s. Stairs: normal trot to about 12 s, then from 16 s on only four foot spheres against the step surface, unchanged to the end. My reading, not tested: with feet-only collision, the trunk has nothing to rest on once it is upside down and sinks under the terrain.
+- **Caveats:** one policy, one seed, one start, one run per ground. 0.85 m/s was chosen for the ramp, not for the stairs. The track videos were checked by one frame every 4 s; `top` and `side` were not watched.
+
+### Nov 7 — Test 10.1: the ramp ground with command 2 / 2 / 0 (no training)
+
+**Setup:** as Test 10 (Test 7 `go1_final`, feet-only robot, `SlopeRingsGround_1`, 65 s, `PRNGKey(0)`, `Scripts/rollout_terrain.py`), but the command is **2 / 2 / 0**, above the trained range (`command_config.a = [1.5, 0.8, 1.2]`). Script `Tests/Test10.1/run_test10_1.sh`, write-up `Tests/Test10.1/Test10.1.md`.
+
+| | Test 10 slanted (0.85 / 0 / 0) | Test 10.1 (2 / 2 / 0) |
+|---|---|---|
+| Fell | no | **yes, at step 69 (1.4 s)** |
+| Mean `track` | 0.483 | 0.0000 |
+| Distance from start | 26.64 m | 0.61 m |
+| Upright | min 0.970 | min -0.996, on its back from 1.4 s |
+
+**Findings**
+- **It never walks.** For the first second body speed stays within about -0.17 to +0.16 m/s (command 2 / 2), then it tips sideways (upright 0.93 at 1.0 s, 0.81 at 1.2 s, -0.12 at 1.38 s; sideways speed spike about 1.7 m/s during the roll). Terminated at 1.4 s, on the flat middle, so the ramp played no part.
+- **No recovery:** nothing moves from 1.6 s to 65 s (upright -0.98, body about 0.25 m below the start level). The track video shows only foot spheres for the rest of the run, as on the Test 10 stairs.
+- **Out-of-range commands are not just ignored.** In Test 7 y = -1 (0.2 over the limit) was followed, and here x 2 (0.5 over) and y 2 (1.2 over) together fall within 1.4 s. I cannot tell which input does it, since both were out of range at once.
+- **Caveats:** one run, one start. Track video checked by frames, `top` and `side` not watched.
+
+### Nov 7 — Test 10.2: the ramp ground with command 1.5 / 0.8 / 0, the trained maximum (no training)
+
+**Setup:** as Test 10 and 10.1 (Test 7 `go1_final`, feet-only robot, `SlopeRingsGround_1`, 65 s, `PRNGKey(0)`, `Scripts/rollout_terrain.py`), command **1.5 / 0.8 / 0**, the edge of the trained range. I checked the limit in the installed Playground code (`go1/joystick.py`: `command_config.a = [1.5, 0.8, 1.2]`, commands drawn uniformly from -a to +a, no clip). Script `Tests/Test10.2/run_test10_2.sh`, write-up `Tests/Test10.2/Test10.2.md`.
+
+| | Test 10 (0.85 / 0 / 0) | Test 10.1 (2 / 2 / 0) | Test 10.2 (1.5 / 0.8 / 0) |
+|---|---|---|---|
+| Fell | no | yes, 1.4 s | **yes, step 1340 (26.8 s)** |
+| Mean `track` | 0.483 | 0.0000 | 0.243 (0.607 over the first 25 s) |
+| Distance from start | 26.64 m | 0.61 m | 29.97 m |
+| 15° ramp reached (d = 10 m) | 14.7 s | never | 7.2 s |
+| First plateau (d = 18 m) | 60.5 s | never | 16.3 s |
+| Furthest ring distance | 20.7 m | 1 m | 28.08 m |
+
+**Findings**
+- **It follows the command at the trained maximum:** 1.49 m/s forward and 0.75 m/s sideways on the flat middle, so 2 / 2 / 0 failed because it was out of range, not because it was fast (but x and y were both out of range, so I still cannot say which).
+- **Much easier ramp climb:** 15° ramp crossed in about 9 s (7.2 to 16.3 s) at 0.84 / 0.53 m/s, without stopping, against about 46 s at 0.85 / 0 / 0. Full command again on the plateau (1.51 / 0.75 m/s).
+- **The 25° ramp stops it:** reached d = 28.0 m at 25.5 s, forward speed to about 0 by 26.4 s, tumbled at 26.8 s (sideways speed spike about 1.8 m/s), then lay on its back (upright -0.995, body height 1.86 m, below the plateau surface) until 65 s. Same fall mode as Test 10 and 10.1.
+- **Heading drift:** yaw drifts to about +85° in 25 s with command yaw 0, so the path curves.
+- **Caveats:** one run, one start. Track video checked by frames, `top` and `side` not watched. The fall position is the body centre, not the feet.
+
 ### Insights so far
 1. Judge walking by rollout numbers and video, not by reward.
 2. Plan at least about 100M steps (the official setup is 200M). Standing is a stable local optimum that takes many steps to leave.
@@ -576,8 +642,14 @@ Checked against the paper's PDF (`Reference/`, 8 pages, text extracted with pypd
 15. The reset interval is what separates walking from standing here: every 80 steps or more walks (80, 120, 200), every 40 stands, whatever `num_evals` is (Test 9.2, two seeds in both directions, a third seed agrees). Minimum for walking: that interval plus about 50M to 70M training steps.
 16. Run long jobs in small units, each copied to the repo and plotted before the next starts.
 17. A policy trained on flat ground walks on my new sine ground (`track` 0.92 against 0.94). The stock rough terrain is a 20 m patch, so a 20 s walk at 1 m/s leaves it. Whether the new ground can be trained on is not tested.
+18. The flat-trained policy climbs a 15° ramp at 0.85 m/s or faster, slowly and in stop-and-go, but falls at the first 15° stair and does not get up (Test 10, one run each). Same average angle, so the steps matter, not the angle.
+19. Raising the command far above the trained range does not give more speed: 2 / 2 / 0 made the policy fall within 1.4 s on flat ground (Test 10.1, one run, both inputs out of range at once).
+20. At the trained maximum (1.5 / 0.8 / 0) the policy follows the command and crosses a 15° ramp in about 9 s, against about 46 s at 0.85 / 0 / 0. The 25° ramp still makes it fall (Test 10.2, one run).
 
 ### Still unknown
+- Whether x = 2 or y = 2 causes the Test 10.1 fall, and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
+- Whether the faster 15° ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
+- Why it falls on the stairs (riser, step height or speed), whether another speed gets up them, and whether the trunk sinking after a fall is the feet-only collision file (Test 10, none tested).
 - Whether the new ground can be trained on (time, GPU memory, whether it learns to walk), and whether the hat has a small effect hidden in the run-to-run spread.
 - Why short reset intervals stop the walking (the line is between 40 and 80 steps and cannot be set more finely; my guess is that 40 steps does not leave time to get up to speed, untested).
 - Whether seeds 2 to 5 walk, and whether the switch lands in the same window for each (needs rollouts).

@@ -112,7 +112,7 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 
 ---
 
-<details open>
+<details>
 <summary><h2>Oct 27 — A new ground, a party hat, and the first walk on it (Test 9.3)</h2></summary>
 
 **What I did.** I wanted a ground I designed myself, so I described it and Claude generated it: two sine waves crossing in x and y, a 0.4 m wavelength, crest heights that vary between 1x and 1.5x, a 100 x 100 m patch and the colour `#9c7590`. It is `Assets/Grounds/SimpleUniFormRoughGround_1.xml`. The design is mine and the file was written by Claude, so it is in [`Declaration.md`](Declaration.md). I also had Claude attach my cone model (`cone_tophat.STL`) to the dog's head as a visual-only hat. It has no collisions and no mass.
@@ -126,6 +126,29 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 **Videos.** Rendering on this ground is slow, about 17 minutes per camera, probably because of the 4-million-cell heightfield (I did not test that). Running the three cameras as three parallel processes took about 20 minutes in total. The README now shows the hat run, with the ground at the bottom. Details are in [`Tests/Test9.3/Test9.3.md`](Tests/Test9.3/Test9.3.md).
 
 **Next.** Whether the ground is trainable is untested. A short smoke run (2048 environments, reset every 80 steps) would show whether it fits in 8 GB.
+
+</details>
+
+---
+
+<details open>
+<summary><h2>Nov 4 to 7 — Ramps and stairs with the flat-ground policy (Tests 10, 10.1, 10.2)</h2></summary>
+
+**What I did.** No training. I took the Test 7 policy (flat ground only) and put it on two new 100 x 100 m grounds I described and Claude generated: square rings with a 15° ramp, a flat plateau, a 25° ramp and so on, once as smooth ramps and once as stairs with the same average angle. It starts on the flat middle with the command held at 0.85 / 0 / 0 for 65 s.
+
+**Finding the speed.** I first tried speeds from 0.3 to 1.5 m/s on the ramp. At 0.75 and below it stood at the foot of the ramp, 0.80 was still climbing at 80 s, and 0.85 was the slowest that reached the plateau (at 61 s). So I used 0.85 for both grounds. Nothing got past the 25° ramp.
+
+**The ramp.** It walked up without falling. On the flat middle it did about 0.8 m/s, but on the 15° ramp only about 0.4 m/s while moving, and it stopped for 1 to 3 s several times (25 s, 38 s and 48 s). The 8 m of ramp took about 46 s, then it jumped back to 0.8 m/s on the plateau at 60.5 s. Heading stayed within 6°.
+
+**The stairs.** It fell at the first step, 15.2 s into the run. It hit the first riser at full speed, tumbled (the heading swung about 235° in a second) and lay on its back for the other 50 s without moving. The ramp and the stairs have the same average angle, so the angle alone is not what stops it: the steps are. It has no way to see them. In the track video you only see four foot spheres after 16 s. My guess is that the trunk sank under the ground because this robot file only collides with its feet, but I did not test that.
+
+**What I checked.** I looked at the two `track` videos as one frame every 4 s (not the `top` and `side` ones), plus the motion graphs, trail maps and numbers. Details are in [`Tests/Test10/Test10.md`](Tests/Test10/Test10.md).
+
+**Test 10.1 (Nov 7, command 2 / 2 / 0).** I repeated the ramp run with the forward and the sideways command both raised to 2, above the trained 1.5 and 0.8. It did not get anywhere: it shook in place for about a second, tipped sideways at 1.0 s and was terminated at 1.4 s, 0.61 m from the start, on the flat middle. It lay on its back for the other 63.6 s (`track` 0.0000), and the track video only shows four foot spheres, as on the stairs. The ramp never mattered. I do not know whether x = 2 or y = 2 is the cause, because both were out of range. Details in [`Tests/Test10.1/Test10.1.md`](Tests/Test10.1/Test10.1.md).
+
+**Test 10.2 (Nov 7, command 1.5 / 0.8 / 0).** Next I used the biggest command the policy was trained on (x 1.5, y 0.8; I checked `command_config.a = [1.5, 0.8, 1.2]` in the Playground code). This time it walked, and fast: 1.49 m/s forward and 0.75 m/s sideways on the flat middle. It crossed the 15° ramp in about 9 s (Test 10 at 0.85 took about 46 s) without stopping, then ran the plateau at full speed. At 25.5 s it reached the foot of the 25° ramp, slowed to a stop, tumbled at 26.8 s and lay on its back for the other 38 s. So 2 / 2 / 0 failed because it was out of range, not because it was fast. The 25° ramp has now beaten the policy at every command I tried. Details in [`Tests/Test10.2/Test10.2.md`](Tests/Test10.2/Test10.2.md).
+
+**Next.** Try a faster speed on the stairs (0.85 was picked for the ramp, and the ramp is much easier at 1.5 / 0.8), split x = 2 from y = 2, and split the x and y parts of the 1.5 / 0.8 run (1.5 / 0 / 0).
 
 </details>
 
@@ -156,6 +179,9 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - The stock rough terrain is only a 20 m patch. At 1 m/s the robot walks off its edge at about 12 s, and that is the "fall" in my rollout, not a stumble.
 - A visual-only hat on the trunk made no visible difference to a rollout (`track` 0.9203 against 0.9199, one run each).
 - Rendering the 4-million-cell ground costs about 17 minutes per camera. Three parallel renders took about 20 minutes in total.
+- Commands well above the trained range do not give more speed: x 2 and y 2 together made the policy fall within 1.4 s on flat ground (Test 10.1, one run).
+- At the trained maximum (1.5 / 0.8 / 0) the policy walks at full command and crosses the 15° ramp in about 9 s, without stopping. It still falls at the foot of the 25° ramp (26.8 s, Test 10.2, one run).
+- The flat-trained Test 7 policy climbs a 15° ramp only at 0.85 m/s or faster, and then slowly and in stop-and-go (about 0.4 m/s moving, 46 s for 8 m). It fell on 15° stairs at the first step (15.2 s) and never got up (Test 10, one run each, 0.85 m/s).
 
 </details>
 
@@ -170,6 +196,9 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Whether more `num_envs` (8192) changes the result.
 - Whether I can train on the new ground at all: time, GPU memory (Test 8 ran out on the stock rough terrain) and whether the policy learns to walk on it. Test 9.3 only shows that a flat-trained policy walks on it.
 - Whether the hat has a small effect hidden in the run-to-run spread (needs repeated runs), and whether the huge heightfield is the reason for the slow rendering.
+- Whether x = 2 or y = 2 causes the fall in Test 10.1 (both were out of range), and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
+- Whether the faster ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
+- Why it falls on the stairs (the steep riser, the step height or the speed), whether another speed gets up them, and whether the trunk sinking under the ground after a fall comes from the feet-only collision file (Test 10, none of these tested).
 - Whether the full 111M steps on rough ground would change the result (the reward was still rising), and why the GPU ran out of memory at epoch 14.
 
 </details>
