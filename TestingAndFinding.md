@@ -670,6 +670,33 @@ No speed got past the 25° ring.
 - **The ring-distance time on the ramp is longer at y = 0** (10.0 s against 8.5 s) only because the sideways speed (0.47 m/s) added to the speed along the ring normal in 10.3.
 - **Caveats:** one run, one start. Track video checked by frames, `top` and `side` not watched.
 
+### Nov 8 — Test 10.5: the ramp-ground policy trained for 253,952,000 steps (in three parts), then the Test 10.4 rollout
+
+**Training:** `Tests/Test10.5/train_250M.sh` (250M requested, 32 evaluations, 4096 envs, seed 0, reset interval 200 steps as in Test 7 and 10.3). **Crashed after 122,880,000 steps** with `Warp CUDA error 2: out of memory (wp_alloc_device_async)` (GPU log flat at 4,578 of 8,151 MiB). Part 2 (`train_250M_part2.sh`, `--resume` from `ckpt_122880000`, seed 1) ran 98,304,000 steps and crashed the same way. Part 3 (`train_250M_part3.sh`, from `ckpt_98304000`, seed 2) ran 32,768,000 steps and finished. Total **253,952,000**. Only the weights are restored (optimizer state and step counter restart); the first evaluation of each resumed part (26.43, 26.93) confirms the weights came back. The crash is not at a fixed epoch (15, 12 and, in Test 8, 14) but after about 21 to 28 minutes of a process; cause unknown.
+
+| Steps | Eval reward, mean (min to max) |
+|---|---|
+| 106M to 123M | 26.3 (26.0 to 26.6) |
+| 123M to 180M | 26.7 (26.3 to 27.3) |
+| 180M to 254M | 26.7 (26.0 to 27.8), last 26.96 |
+
+**Rollout:** as Test 10.4 (ramp ground, command 1.5 / 0 / 0, 65 s, `PRNGKey(0)`), policy `~/go1_slanted_250m_part3/go1_final`. Write-up `Tests/Test10.5/Test10.5.md`, plot `reward_plot.png` (`Scripts/plot_reward_parts.py`).
+
+| | Test 10.4 (122.88M steps) | Test 10.5 (253.95M steps) |
+|---|---|---|
+| Fell | step 1316 (26.3 s) | step 1655 (33.1 s) |
+| Mean `track` (until the fall) | 0.239 (0.591) | 0.242 (0.475) |
+| Time on the 15° ramp | 10.0 s | 17.1 s |
+| Forward speed on flat / 15° ramp / plateau | 1.44 / 0.86 / 1.44 m/s | 1.47 / 0.59 / 1.47 m/s |
+| Reached the 25° ramp | 25.0 s | 32.4 s |
+| Highest body height | 2.53 m | 2.52 m |
+
+**Findings**
+- **No gain from doubling the steps.** The training reward is flat after about 110M steps (same as the flat run: 26.7 at 98M, 26.9 at 123M), and the policy stalls at the foot of the 25° ramp and topples 0.7 s after reaching it, as in Test 10.4. The fall is later only because the 15° ramp took 7.4 s longer.
+- **Slower on the 15° ramp** (0.59 against 0.86 m/s forward, sideways drift of 0.3 to 0.5 m/s at 9 to 14 s, about -30° heading change). One run, with resets of the optimizer and changed seeds at the joins, so I cannot say whether it is an effect of the steps.
+- **After falling it keeps moving its legs** (joint-angle spread 0.086 rad against 0.012 and 0.009 in 10.3 and 10.4; body rotation rate 0.38 against 0.04 and 0.05 rad/s) but stays on its back (upright -0.94 to -1.0).
+- **Caveats:** one policy, one rollout, a resumed training in three parts. Track video checked by frames, `top` and `side` not watched.
+
 ### Insights so far
 1. Judge walking by rollout numbers and video, not by reward.
 2. Plan at least about 100M steps (the official setup is 200M). Standing is a stable local optimum that takes many steps to leave.
@@ -693,10 +720,12 @@ No speed got past the 25° ring.
 20. At the trained maximum (1.5 / 0.8 / 0) the policy follows the command and crosses a 15° ramp in about 9 s, against about 46 s at 0.85 / 0 / 0. The 25° ramp still makes it fall (Test 10.2, one run).
 21. A policy trained on the ramp ground itself (120M steps, 26 min, 4.5 GB, reward 25.7) did not do better on the 25° ramp than the flat-trained one at 1.5 / 0.8 / 0 (Test 10.3, one seed). Every episode starts in the flat middle, so the 25° ring may rarely be seen in training (untested).
 22. Removing the sideways command (1.5 / 0 / 0, ramp-trained policy) does not change the 25° result: it stalls at the foot at 25.0 s and falls at 26.3 s (Test 10.4, one run). Forward speed on the 15° ramp was about 0.85 m/s in all three 1.5-command runs. The 25° ramp has beaten every policy and command tried so far.
+23. Doubling the training steps on the ramp ground (254M, resumed in three parts) did not help: the reward stays near 26.7 after about 110M steps and the policy still stalls at the foot of the 25° ramp (Test 10.5, one run). Long runs crash with a CUDA out-of-memory error after 21 to 28 minutes of a process (Test 8, 10.5 twice), so restart them in parts of 10 to 12 epochs; cause unknown.
 
 ### Still unknown
 - Whether x = 2 or y = 2 causes the Test 10.1 fall, and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
 - Whether the faster 15° ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
+- What causes the out-of-memory crash of long training runs (GPU log flat at 4.5 GB of 8 GB), and whether the slower 15° ramp climb and the leg waving after the fall in Test 10.5 are real (one run, three resumed parts).
 - How often training episodes on the ramp ground reach the rings, and whether random start points or a slope curriculum would let a policy learn the 25° ramp.
 - Why it falls on the stairs (riser, step height or speed), whether another speed gets up them, and whether the trunk sinking after a fall is the feet-only collision file (Test 10, none tested).
 - Whether the new ground can be trained on (time, GPU memory, whether it learns to walk), and whether the hat has a small effect hidden in the run-to-run spread.

@@ -46,6 +46,28 @@ I checked the `track` video by frames (one every 2 s, and every 5th frame from 2
 
 ![Trail](slanted/trail_x1.5_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.png)
 
+## Reward
+
+A rollout has no training reward of its own, so these are the two reward views that fit Test 10.4.
+
+**Reward per step during the rollout** ([track_steps.png](./track_steps.png), made by [Scripts/plot_track_steps.py](../../Scripts/plot_track_steps.py)). `track` is the velocity-tracking term of the reward for each 0.02 s step, from 0 (far from the command) to 1 (exactly the command). It is one term of the training reward, not the whole reward: the energy and falling terms are not saved in the rollout.
+
+![Tracking reward per step](track_steps.png)
+
+| Phase | Steps | Mean `track` |
+|---|---|---|
+| Flat middle (step 100 to the ring at 397) | 297 steps | **0.948** |
+| 15° ramp (steps 397 to 898) | 501 steps | **0.199** |
+| Plateau (steps 948 to 1249) | 301 steps | **0.948** |
+| Whole walk until the fall (steps 0 to 1316) | 1316 steps | 0.591 |
+| Whole 65 s run (the 1934 steps lying on its back score 0) | 3250 steps | 0.239 |
+
+On the 15° ramp the policy gets only about a fifth of the tracking reward (0.199 against 0.948), because it moves at 0.86 m/s against a command of 1.5. It never stops there, so the cost is slow progress, not a fall. After the fall the reward is 0 for the remaining 1934 steps.
+
+**Training reward of this policy against steps** ([reward_plot.png](./reward_plot.png), from [Test10.3's train.log](../Test10.3/train.log)). The policy is Test 10.3's, so this is the same training curve: 0 at the start, a plateau near 19 from about 25M to 50M steps, then a climb to 25.74 at 122.88M. The evaluation episodes are on the ramp ground.
+
+![Training reward against steps](reward_plot.png)
+
 ## Takeaways
 
 1. **The sideways command is not what stops the 25° ramp.** With y = 0 the policy still stalls at the foot at 25.0 s and falls at 26.3 s. That is the same place and almost the same time as the flat-trained policy in Test 10.2 (26.8 s). Test 10.3 (23.1 s, slid backwards after about 0.4 m of ramp) was the outlier.

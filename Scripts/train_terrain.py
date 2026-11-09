@@ -53,6 +53,11 @@ steps = opt("--steps", 120_000_000, int)
 evals = opt("--evals", 16, int)
 envs = opt("--envs", 4096, int)
 seed = opt("--seed", 0, int)
+# --resume FILE: start from the weights in FILE (a ckpt_<step> or go1_final saved by an earlier run) instead of from scratch.
+# Only the weights are restored (the normalizer, the policy and the value network). The optimizer state and the step counter
+# start again, so the step numbers printed and used in the ckpt_<step> names count from 0 again, and it is not the same as one
+# unbroken run. Used when a long run crashes with a GPU out-of-memory error: run the rest in a fresh process in a new folder.
+resume = opt("--resume", None, str)
 ground = argv[0]
 
 xml = epath.Path(ground)
@@ -100,8 +105,14 @@ def save_ckpt(step, make_policy, params):
     model.save_params(f"ckpt_{step}", params)
 
 
+restore_kwargs = {}
+if resume:
+    restore_kwargs["restore_params"] = model.load_params(resume)  # (normalizer, policy, value), as saved by save_params
+    print("resuming from the weights in", resume, flush=True)
+
 train_fn = functools.partial(
     ppo.train, **dict(ppo_training_params),
+    **restore_kwargs,
     seed=seed,
     network_factory=network_factory,
     randomization_fn=randomize.domain_randomize,
