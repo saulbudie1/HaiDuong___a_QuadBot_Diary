@@ -174,6 +174,38 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 ---
 
 <details open>
+<summary><h2>Nov 13 — The ramp training probably never reached a ramp (no new run)</h2></summary>
+
+**The question.** My ramp-trained policies did no better on the 25° ramp. I had guessed that training episodes start in the flat middle and last 20 s, so the 25° ring (28 m out) is rarely reached. I asked how far a training robot really gets.
+
+**What I found.** I had Claude read the installed Brax code (lines 809 to 823 of `ppo/train.py`). Training puts every robot back at the start between chunks, so the reset interval from Test 9.2 is real, not just my reading. In the ramp runs it is 200 steps, which is 4 s, not 20 s. From the saved Test 10.4 and 10.5 rollouts, a finished policy at full speed covers only about 4.4 m in 200 steps. The 15° ramp starts at 10 m and the 25° ramp at 28 m. In the rollouts the robot only reached the 25° ring after 22 to 32 s.
+
+**What it means.** The "ramp-trained" policies of Tests 10.3 to 10.5 probably never stepped on a slope while training. They were effectively trained on the flat middle. That fits Test 10.3 matching the flat-trained Test 10.2 on the 15° ramp, and 254M steps not changing the 25° result. The 15° ramp is crossed at full speed because of the balance feedback the policy already had plus momentum, not because of ramp practice. So I should not say "ramp training does not help". I should say "my training probably never showed the policy a slope".
+
+**What I did not check.** Where the training robots really went (nothing was logged), and the training commands are random, so the typical speed is below 1.5 m/s and the exposure is even smaller. This is an inference, not a measurement.
+
+**Ideas for the next test, none run.** Count how far training robots get (random commands, 200 steps, many tries). Stop the forced resets (`num_resets_per_eval` 0) and make the episode longer (about 2000 steps), which `train_terrain.py` cannot do yet and which has never been tried before. Move the ramp closer (the `BANDS` table in `Scripts/make_terrain.py`, written to a new file so Tests 10 to 10.5 stay reproducible) or start the robots at random places. Moving the ramp only helps if the interval is also longer. Details in [`TestingAndFinding.md`](TestingAndFinding.md).
+
+</details>
+
+---
+
+<details open>
+<summary><h2>Nov 13 — Test 11: the ramp 2 m from the start, and the robot freezes on it</h2></summary>
+
+**The idea.** If my training robots never reached the ramp, move the ramp to them. I made a new ground (`SlopeRingsGround_2`, every band 8 m closer, so the 15° ramp starts 2 m from the start) and trained on it with the same settings as Test 10.3 (122.88M steps, 16 evaluations, 4096 environments, seed 0). It took 24.5 minutes and did not crash.
+
+**What happened.** The policy walks the flat part, then climbs the 15° ramp at about 1.1 m/s (the earlier policies did 0.86), and then at about 8.4 s it stops and stands still on the slope for the rest of the 65 s. It never falls and never reaches the 25° ramp. The legs are almost frozen after the stop. The same freeze happened at commands 1.0 and 0.85 (stopping at 11.6 s and 12.6 s) and on the old ground (at 12.9 s, only 1.8 m up its ramp). I looked at frames from 7.0 to 8.5 s and saw no trip or slip: the speed just falls smoothly from 1.1 to 0 m/s while the body keeps rising. The training reward stayed between 17.7 and 20.5 and never climbed to 26 like the flat run. Details in [`Tests/Test11/Test11.md`](Tests/Test11/Test11.md).
+
+**My hypothesis, not tested.** The robot settles into the same "stand still and keep the standing reward" state as my Tests 1 to 4. It fits the standing pose, the frozen joints and a training reward of about 19, which is what standing earns on flat ground. It does not fully fit: the reward is on a different ground so I cannot read the 19 the same way, the rollout only saves `track` and not the other reward terms, and the freeze begins only after it has walked and climbed. To test it I would recompute the reward of the frozen pose, train longer or with another seed, and start the robot at rest on the slope.
+
+**One seed, one run, one rollout per ground and command.**
+
+</details>
+
+---
+
+<details open>
 <summary><h2>What I know now</h2></summary>
 
 
@@ -203,6 +235,9 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Training on the ramp ground (120M steps, about 26 min, 4.5 GB of GPU memory) works and reaches reward 25.7, but the policy still fell on the 25° ramp at 1.5 / 0.8 / 0 (Test 10.3, one seed) and at 1.5 / 0 / 0 (Test 10.4). It crossed the 15° ramp as fast as the flat-trained one, at about 0.85 m/s forward in all three 1.5-command runs.
 - At the trained maximum (1.5 / 0.8 / 0) the policy walks at full command and crosses the 15° ramp in about 9 s, without stopping. It still falls at the foot of the 25° ramp (26.8 s, Test 10.2, one run).
 - The flat-trained Test 7 policy climbs a 15° ramp only at 0.85 m/s or faster, and then slowly and in stop-and-go (about 0.4 m/s moving, 46 s for 8 m). It fell on 15° stairs at the first step (15.2 s) and never got up (Test 10, one run each, 0.85 m/s).
+- Training puts every robot back at the start every 200 steps (4 s) in my ramp runs (Brax code read). A finished policy covers about 4.4 m in that time, short of the 15° ramp at 10 m, so my "ramp-trained" policies (Tests 10.3 to 10.5) probably never met a slope in training. An inference, not measured.
+- With the 15° ramp 2 m from the start (Test 11, one seed) the policy climbs the ramp at about 1.1 m/s and then freezes on it at every command tried, and never reaches the 25° ramp. My untested hypothesis: it settles into the standing state of Tests 1 to 4.
+- From a standing start the Test 7 policy needs 19 steps (0.38 s) to pass `track` 0.9, so a 40-step window is not mostly start-up (one policy, one rollout; the reason 40 stands still is still unknown).
 
 </details>
 
@@ -220,7 +255,8 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Whether x = 2 or y = 2 causes the fall in Test 10.1 (both were out of range), and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
 - Whether the faster ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
 - What causes the out-of-memory crash (three runs now), and why the 254M policy is slower on the 15° ramp and waves its legs after falling (one run, three resumed parts).
-- How often training episodes on the ramp ground reach the 15° and 25° rings (my guess is the 25° ring almost never), and whether random start points or a slope curriculum would let the policy learn it.
+- Why the Test 11 policy freezes on the 15° ramp (my hypothesis is the standing state of Tests 1 to 4), and whether it would leave it with more steps, another seed, or a start at rest on the slope.
+- How often training episodes on the ramp ground reach the 15° and 25° rings (now my guess is that even the 15° ring is almost never reached, because of the reset every 200 steps), and whether a longer interval, a closer ramp, random start points or a slope curriculum would let the policy learn the 25° ramp.
 - Why it falls on the stairs (the steep riser, the step height or the speed), whether another speed gets up them, and whether the trunk sinking under the ground after a fall comes from the feet-only collision file (Test 10, none of these tested).
 - Whether the full 111M steps on rough ground would change the result (the reward was still rising), and why the GPU ran out of memory at epoch 14.
 

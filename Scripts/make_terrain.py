@@ -1,6 +1,7 @@
 """Generate the two ring terrains in Assets/Grounds: one with ramps, one with stairs.
 
     python make_terrain.py            # writes SlopeRingsGround_1.xml and StairRingsGround_1.xml
+    python make_terrain.py --near     # writes only SlopeRingsGround_2.xml: the same rings 8 m closer (Test 11)
 
 Both are heightfield scenes in the same format as SimpleUniFormRoughGround_1.xml (the heights are written inline, so
 no PNG is needed) and load the same way (Scripts/rollout_terrain.py <xml> 1 0 0).
@@ -129,6 +130,17 @@ def write(name, title, what, height, cell, rgba):
 
 
 if __name__ == "__main__":
+    import sys
+    if "--near" in sys.argv:
+        # Test 11: every band moved 8 m closer to the middle, so the 15 degree ramp starts 2 m from where the robot
+        # spawns (d 0 to 2 flat, 2 to 10 at 15, 10 to 20 flat, 20 to 27 at 25, 27 to 37 flat, 37 to 42 at 35).
+        # Written to a new file so SlopeRingsGround_1.xml (Tests 10 to 10.5) is not touched.
+        BANDS[:] = [(a - 8 if a >= 10 else a, b - 8, g) for a, b, g in BANDS]
+        write("SlopeRingsGround_2.xml", "slope rings ground 2",
+              "SlopeRingsGround_2: SlopeRingsGround_1 with every band 8 m closer to the middle, so the 15 degree ramp "
+              "starts 2 m from the start point (planar faces at 15, 25 and 35 degrees separated by flat steps).",
+              ramp_height, 0.10, "0.40 0.62 0.48 1")
+        sys.exit(0)
     write("SlopeRingsGround_1.xml", "slope rings ground 1",
           "SlopeRingsGround_1: square rings of ramps (planar faces at 15, 25 and 35 degrees) separated by flat steps.",
           ramp_height, 0.10, "0.40 0.62 0.48 1")
