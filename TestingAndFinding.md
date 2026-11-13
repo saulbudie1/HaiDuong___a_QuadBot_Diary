@@ -749,6 +749,60 @@ The 15° ramp starts at d = 10 m and the 25° ramp at d = 28 m. The command ceil
 - **Hypothesis (mine, untested): the robot settles into the same "stand still and keep the standing reward" state as Tests 1 to 4.** For it: the standing pose, the frozen joints, and a training reward of 17.7 to 20.5, which is what standing earns on flat ground (the pose term pays about 10 of the roughly 40 possible). Against or missing: the reward is on a different ground, the rollout does not save the individual reward terms (only `track`), and the freeze starts only after it has walked and climbed. Tests: recompute the reward terms of the frozen pose, train longer or with another seed, start the policy at rest on the slope.
 - **Caveats:** one seed, one training run, one rollout per ground and command. Track video checked by frames (9 s, 30 s and 7.0 to 8.5 s), `top` and `side` not watched. The 200-step interval is computed, not printed. Where the training robots went was not logged.
 
+### Nov 13 — Test 11.1: Test 11 with the reset interval raised from 200 to 1000 steps (122.88M steps)
+
+**Setup:** the Test 11 run again (`SlopeRingsGround_2`, 120M requested, 16 evaluations, 4096 envs, seed 0) with `Scripts/train_terrain.py --resets 2`, so every training robot is reset every 1000 steps (20 s, the episode cap) instead of every 200. The script now prints the interval, computed from the Brax formula ("every 1000 steps (computed)"), not read back from the run. 122,880,000 steps, jit 1:08, training 25:07, peak 4,578 MiB, no crash. Run by `Tests/Test11.1/run_test11_1.sh`, videos by `render_test11_1.sh`, write-up `Tests/Test11.1/Test11.1.md`. Rollouts: 1.5 / 0 / 0, 65 s, new ground (with videos) and old ground.
+
+**Reward (evaluation on the new ground):** 11.4 at 8.2M, 18.7 at 24.6M, then 18.3 to 21.4, 21.35 at the end (Test 11 ended at 19.4). It never climbs toward 26.
+
+**Findings**
+- **The policy stands still from the first step and never walks.** In 65 s it moved 0.05 m on both grounds, `track` 0.0001 (the standing value at command 1.5, `exp(-1.5² / 0.25)`), upright 0.998 or more, no fall, body height 0.30 m (the standing height of Test 1.1). The Test 11 policy at least walked the flat part and climbed the 15° ramp.
+- **The longer interval did not help; in this run it stopped the walking.** Test 9.2 found 80, 120 and 200 steps walk and 40 stands (flat ground), so the walking range has an edge somewhere between 200 and 1000 steps as well as the one between 40 and 80. Why either edge exists is untested.
+- **It does not test the "episodes too short to reach the ramp" idea:** the policy never walks, so no episode gets near the ramp. That question is still open.
+- **The reward (18.3 to 21.4) reads like the standing level** of Tests 1 to 4 and 6, but the reward terms of the standing pose have not been recomputed, and the ground is different.
+- **Caveats:** one seed, one training run, one rollout per ground, one command. The videos (65 s each, top, side, track) were not watched; the finding rests on the numbers.
+
+### Nov 13 — Test 11.2: the Test 11 policy trained for another 122.88M steps (245.76M in total)
+
+**Setup:** resumed from `ckpt_122880000` of Test 11 in a fresh process and folder, another 122,880,000 steps on `SlopeRingsGround_2`, 16 evaluations, 4096 envs, reset every 200 steps (as Test 11), **seed 1** for this part (Test 11: 0). Only the weights are restored, so the optimizer restarts and it is not one unbroken run. 24:39 training, peak 4,576 MiB, no crash. Run by `Tests/Test11.2/run_test11_2.sh`, write-up `Tests/Test11.2/Test11.2.md`. Rollouts: 1.5 / 0 / 0, 65 s, new ground (with videos) and old ground.
+
+**Reward (evaluation on the new ground):** between 17.1 and 19.0 for the whole part (final 17.13, the lowest); the combined curve is flat at 17 to 20.5 from 24.6M steps on.
+
+**Findings**
+- **More steps made the stall earlier, not later.** The policy walks 1.24 m/s (1.38 on the old ground), reaches the foot of the 15° ramp (1.6 s, 8.2 s), stops 0.6 to 0.7 m up it (2.3 s, 9.0 s; 8% and 9% of the 8 m band), then slides slowly back (−0.01 m/s) to the foot by 65 s. No fall. Test 11, with half the steps, stopped 66% up (new ground) and 29% up (old), measured the same way (ring distance from the centre).
+- **Doubling the steps again did not help**, as in Test 10.5 (254M steps on the old ramp ground), and this time the policy had been trained on a ground where the ramp is near the start.
+- **Not an effect of steps alone:** the second part used seed 1 and a restarted optimizer, and each part is one seed, so the 66% against 8% could be run-to-run spread.
+- **Why it stops is still unknown.** The hypotheses are unchanged and untested: the standing state of Tests 1 to 4 (mine), a policy that finds standing safer than moving on a slope, and exposure (the interval was still 200 steps, so episodes were still cut at 4 s).
+- **Caveats:** one chain, one rollout per ground, one command. The videos (65 s each) were not watched.
+
+### Nov 13 — Tests 11, 11.1 and 11.2 together: with the ramp near the start, neither a longer interval nor more steps gets the policy up it
+
+All three runs train on `SlopeRingsGround_2` (15° ramp from 2 m), PPO settings of the Go1 rough task, 4096 envs, one chain each. 11.1 and 11.2 are two separate follow-ups of Test 11, not a sequence: 11.1 starts from scratch, 11.2 continues the weights of Test 11.
+
+| Run | What changed from Test 11 | Total steps | Reset every | Reward after 25M steps | What the rollout does (1.5 / 0 / 0, 65 s, new ground) |
+|---|---|---|---|---|---|
+| 11 | (baseline: ramp 2 m from the start) | 122.88M | 200 | 17.7 to 20.5, final 19.43 | walks, climbs the ramp, stops 5.3 m up (66%) at 8.4 s, no fall |
+| 11.1 | reset interval 1000 steps | 122.88M | 1000 | 18.3 to 21.4, final 21.35 | stands still from the first step, 0.05 m in 65 s |
+| 11.2 | trained for as many steps again (second part seed 1) | 245.76M | 200 | 17.1 to 19.0 (second part), final 17.13 | walks, stops 0.6 m up the ramp (8%) at 2.3 s, slides back to the foot, no fall |
+
+**What the three have in common (in my runs)**
+- **Giving the policy more training time did not help it up the ramp, in either form.** Longer episodes (11.1) stopped it walking at all; twice the steps (11.2) moved the stall from 66% to 8% of the way up. Test 10.5 (254M on the old ramp ground) also gained nothing. The two follow-ups were meant to fix exposure and training time, and neither did.
+- **The reward never leaves the standing level.** From about 25M steps on, all three sit between 17 and 21.4. The flat run (Test 7, 26.9) and the old ramp ground (Test 10.3, 25.7; Test 10.5, about 26.7) went above 25, and those policies probably never saw a slope in training (Nov 13 entry above). So putting the ramp in front of the robot in training is where the reward stays at about 19, in every run so far.
+- **The robot does not fall in any of them.** It walks, or stands, and stops. After stopping it stays upright with the joints almost still and slides back slowly (about -0.01 m/s in 11 and 11.2). This is a stable state, not a stumble.
+- **Where it stops differs run to run** (5.3 m up, 0.6 m up, never started), so the stop point is not a fixed property of the ground.
+
+**What it does not show**
+- It does not show a trend ("worse and worse"). 11.1 and 11.2 are independent attempts that both did worse than 11. 11.2 also changed the seed and restarted the optimizer, so 66% against 8% could be run-to-run spread; with one seed each I cannot separate that from the effect of steps.
+- **Test 11.1 has no control.** I never ran a 1000-step interval on flat or on the old ramp ground, so its standing could come from the interval alone (an extension of the Test 9.2 edge), from the near ramp, or both. The "unfamiliar slope" idea cannot explain it anyway: the robot never reached a slope.
+- **The flat-trained policies handle the ramp** (Test 7 and Tests 10.2 to 10.5 crossed the 15° ramp, at 1.5 / 0.8 in about 9 s), so a slope being an unfamiliar state cannot be the whole story for Tests 11 and 11.2: something about training with the ramp near the start seems to make standing win.
+- It does not say why. The hypotheses are all untested: (a) the standing state of Tests 1 to 4 (mine); (b) **my theory (README):** the policy stays still to be safe, because moving risks falling over and a fall ends the episode and loses all the remaining reward, while standing keeps a steady 17 to 21. Caveats: in the Go1 task an episode ends only when the body flips upside down (`upvector z < 0`, `joystick.py`), which a 15° ramp alone does not cause; fall rates in training were not logged; the flat-trained policies crossed the ramp without falling; (c) a poor local optimum that more steps of the same kind of training do not leave.
+
+**Next tests proposed (none run)**
+- Control for 11.1: train on the old (or flat) ground with `--resets 2`, to see whether the 1000-step interval alone makes it stand.
+- Seeds: run the plain Test 11 setup with two more seeds, to see how much the stop point moves.
+- Log in training or in a rollout the reward terms and the fall rate on the ramp, to test (a) and (b).
+- Give the learner a way in that is not a wall: random start points on and before the ramp, or a gentler first slope (for example 5° to 10°) before 15°.
+
 ### Insights so far
 1. Judge walking by rollout numbers and video, not by reward.
 2. Plan at least about 100M steps (the official setup is 200M). Standing is a stable local optimum that takes many steps to leave.
@@ -775,6 +829,9 @@ The 15° ramp starts at d = 10 m and the 25° ramp at d = 28 m. The command ceil
 23. Doubling the training steps on the ramp ground (254M, resumed in three parts) did not help: the reward stays near 26.7 after about 110M steps and the policy still stalls at the foot of the 25° ramp (Test 10.5, one run). Long runs crash with a CUDA out-of-memory error after 21 to 28 minutes of a process (Test 8, 10.5 twice), so restart them in parts of 10 to 12 epochs; cause unknown.
 24. Brax resets every training robot to the start between chunks (code read, lines 809 to 823), so the reset interval of 200 steps in my ramp runs means robots return to the centre every 4 s. A finished policy covers only about 4.4 m in that time, short of the 15° ramp at 10 m. So Tests 10.3 to 10.5 probably never met a slope in training and are effectively flat-trained (inference, exposure not measured; the "20 s episode" in the Test 10.3 guess was wrong). Don't read them as "ramp training does not help".
 25. With the 15° ramp moved to 2 m from the start and the same training settings (Test 11, one seed), the policy climbs the 15° ramp at about 1.1 m/s and then freezes on it at every command tried (1.5, 1.0, 0.85), upright and with the joints almost still, and never reaches the 25° ramp. My untested hypothesis is that it settles into the standing state of Tests 1 to 4.
+26. Raising the reset interval from 200 to 1000 steps (Test 11.1, one seed, same ground and settings as Test 11) did not get the policy up the ramp: it stood still from the first step and never walked (0.05 m in 65 s, `track` 0.0001, reward 18 to 21). So a longer interval is not always better; together with Test 9.2 (40 stands, 80 to 200 walk) the walking range has an upper edge between 200 and 1000 steps that is not located. It leaves the "episodes too short" idea for the Test 11 stall untested.
+27. Training the Test 11 policy for as many steps again (Test 11.2, 245.76M in total, second part with seed 1) did not get it up the 15° ramp: it stalls 0.6 to 0.7 m up the ramp (8% and 9% of its length, against 66% and 29% in Test 11), then slides back to the foot. The reward stays at 17 to 19. More steps on this ground do not help (Test 10.5 and 11.2, one chain each), and the stall point may move between seeds. Why it stops is untested.
+28. With the ramp near the start (Tests 11, 11.1, 11.2, one chain each), the reward stays at the standing level of 17 to 21 whatever I changed (reset interval 200 or 1000, 123M or 246M steps), against 26 to 27 on flat and on the old ramp ground, and the policy either never walks (11.1) or stops on the ramp (11, 11.2). More training time did not help in either form. It is not shown to be a trend, and the cause is untested. Test 11.1 has no flat-ground control (the 1000-step interval alone may explain its standing), so the near ramp is not established as the cause for it.
 
 ### Still unknown
 - Whether x = 2 or y = 2 causes the Test 10.1 fall, and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
@@ -784,6 +841,8 @@ The 15° ramp starts at d = 10 m and the 25° ramp at d = 28 m. The command ceil
 - How often training episodes on the ramp ground reach the rings (Nov 13: probably never even the 15° ring, because of the forced reset every 200 steps, see the Nov 13 entry; not measured), and whether longer episodes, a closer ramp, random start points or a slope curriculum would let a policy learn the 25° ramp.
 - Why it falls on the stairs (riser, step height or speed), whether another speed gets up them, and whether the trunk sinking after a fall is the feet-only collision file (Test 10, none tested).
 - Whether the new ground can be trained on (time, GPU memory, whether it learns to walk), and whether the hat has a small effect hidden in the run-to-run spread.
+- Why the Test 11 policy stalls on the 15° ramp and why more steps (Test 11.2) moved the stall to the foot of it, and whether that is run-to-run spread (needs more seeds); tests: recompute or log the reward terms of the stalled pose, start the policy at rest on the slope, train with random start points on the ramp.
+- Why a 1000-step reset interval also stops the walking (Test 11.1, one seed), and where between 200 and 1000 steps the walking stops. A middle value (for example 400 or 500) and `num_resets_per_eval` 0 (no forced resets) are untried.
 - Why short reset intervals stop the walking (the line is between 40 and 80 steps and cannot be set more finely; my guess was that 40 steps does not leave time to get up to speed; on Nov 12 the Test 7 policy needed only 19 steps to pass `track` 0.9, so that guess looks unlikely, see the start-up bullet under Test 7; the cause is untested).
 - Whether seeds 2 to 5 walk, and whether the switch lands in the same window for each (needs rollouts).
 - Why the 60-evaluation schedule stops the walking (the reset-chunk idea is untested), where between 31 and 60 the line is, and what the collapsed robot does (needs a video).
@@ -795,4 +854,4 @@ The 15° ramp starts at d = 10 m and the 25° ramp at d = 28 m. The command ceil
 - Whether the constant solver warnings slow training.
 
 ### Next
-See `todo.md` for the running list. Current first items: measure how often training episodes on the ramp ground reach the 15° and 25° rings (the Nov 13 entry says the forced reset every 200 steps probably keeps them off the slopes, so a longer interval and episode cap come with that), then (if the 25° ring is rarely seen) train with random start points or a growing slope; split the sideways and forward parts of the 1.5 / 0.8 and 2 / 2 commands; and a plateau-start sweep on the 25° ramp.
+See `todo.md` for the running list. Nov 13 (Test 11.1): a 1000-step reset interval made the policy stand still, so a longer episode cap with the ramp 2 m away needs an interval that still lets it learn to walk (between 200 and 1000 steps, untried). Current first items: measure how often training episodes on the ramp ground reach the 15° and 25° rings (the Nov 13 entry says the forced reset every 200 steps probably keeps them off the slopes, so a longer interval and episode cap come with that), then (if the 25° ring is rarely seen) train with random start points or a growing slope; split the sideways and forward parts of the 1.5 / 0.8 and 2 / 2 commands; and a plateau-start sweep on the 25° ramp.

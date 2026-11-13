@@ -206,6 +206,36 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 ---
 
 <details open>
+<summary><h2>Nov 13 — Test 11.1: a longer reset interval, and the robot never walks</h2></summary>
+
+**The idea.** The Test 11 robots were reset every 200 steps (4 s), which may be too soon to get far up the ramp. So I ran Test 11 again with one change: a reset every 1000 steps (20 s, the episode cap). I added a `--resets` option to the training script for it (Claude wrote it), and it prints the interval it computes. Same ground, same settings, seed 0, 122.88M steps, 25 minutes, no crash.
+
+**What happened.** The policy stands still from the first step. In 65 s it moved 0.05 m, and `track` was 0.0001, which is exactly what standing earns at command 1.5. It stays upright and does not fall. The training reward went to about 19 and ended at 21.4, which reads like the standing level of Tests 1 to 4. The Test 11 policy at least walked and climbed the ramp, so this is worse. I have not watched the three videos (top, side, track); the numbers say it does not move. Details in [`Tests/Test11.1/Test11.1.md`](Tests/Test11.1/Test11.1.md).
+
+**What I take from it.** A longer interval is not always better. In Test 9.2 a reset every 80 to 200 steps walked and every 40 stood still. Now 1000 stands still too, so the walking range has an edge somewhere between 200 and 1000 steps, and I do not know why. It also does not test my "episodes too short to reach the ramp" idea, because the robot never walks far enough to meet the ramp in any episode.
+
+**One seed, one run, one rollout per ground.**
+
+</details>
+
+---
+
+<details open>
+<summary><h2>Nov 13 — Test 11.2: twice the steps, and the robot stalls at the foot of the ramp</h2></summary>
+
+**The idea.** Test 11 stalled partway up the 15° ramp. I trained the same policy for as many steps again (another 122.88M, 245.76M in total, about 25 minutes more) to see whether more training gets it up. The second part used seed 1 and the optimizer restarted, so it is not one unbroken run.
+
+**What happened.** It got worse. The policy walks at about 1.2 m/s, reaches the foot of the 15° ramp, goes about 0.6 m up and stops, at 2.3 s on the new ground and 9.0 s on the old one. Then it slowly slides back down to the foot and stays there. It never falls. Test 11, with half the steps, stopped 66% of the way up (new ground) and 29% (old ground), measured the same way. The training reward stayed at 17 to 19 for the whole extra part and ended at 17.1. I looked at the motion graphs and read the numbers; I did not watch the three videos. Details in [`Tests/Test11.2/Test11.2.md`](Tests/Test11.2/Test11.2.md).
+
+**What I take from it.** More steps on this ground do not help, which is what Test 10.5 also showed. But I cannot say the extra steps made it worse: the second part had a different seed, and one seed each means the 66% against 8% could be run-to-run spread. Why it stops is still unknown: my standing-state hypothesis, a policy that finds standing safer than moving on a slope, and the idea that training episodes never reach this far are all untested.
+
+**One chain, one rollout per ground.**
+
+</details>
+
+---
+
+<details open>
 <summary><h2>What I know now</h2></summary>
 
 
@@ -237,6 +267,9 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - The flat-trained Test 7 policy climbs a 15° ramp only at 0.85 m/s or faster, and then slowly and in stop-and-go (about 0.4 m/s moving, 46 s for 8 m). It fell on 15° stairs at the first step (15.2 s) and never got up (Test 10, one run each, 0.85 m/s).
 - Training puts every robot back at the start every 200 steps (4 s) in my ramp runs (Brax code read). A finished policy covers about 4.4 m in that time, short of the 15° ramp at 10 m, so my "ramp-trained" policies (Tests 10.3 to 10.5) probably never met a slope in training. An inference, not measured.
 - With the 15° ramp 2 m from the start (Test 11, one seed) the policy climbs the ramp at about 1.1 m/s and then freezes on it at every command tried, and never reaches the 25° ramp. My untested hypothesis: it settles into the standing state of Tests 1 to 4.
+- With a reset every 1000 steps instead of 200 (Test 11.1, one seed, same ground as Test 11) the policy stood still from the first step and never walked (0.05 m in 65 s). So a longer interval is not always better, and the walking range has an upper edge between 200 and 1000 steps that I have not found.
+- Training the Test 11 policy for as many steps again (Test 11.2, 245.76M in total, second part with another seed) did not get it up the 15° ramp. It stalled 0.6 to 0.7 m up the ramp (Test 11: 66% and 29% of the way), slid back to the foot and stayed there, and the reward stayed at 17 to 19. One chain, so the stall point may be run-to-run spread.
+- Putting it together (Tests 11, 11.1, 11.2, one chain each, all with the ramp 2 m from the start): a longer reset interval and twice the steps both failed to get the policy up the ramp. The reward stayed at 17 to 21 in all three (26 to 27 on flat ground), and the robot either never walked (11.1) or stopped on the ramp (11, 11.2). It never fell. This is not a trend ("worse and worse"): 11.1 and 11.2 are two separate attempts that both did worse than 11, and the stop point may just move between seeds. Why is untested. Next ideas: more seeds of Test 11, log the fall rate and reward terms on the ramp, random start points, or a gentler first slope.
 - From a standing start the Test 7 policy needs 19 steps (0.38 s) to pass `track` 0.9, so a 40-step window is not mostly start-up (one policy, one rollout; the reason 40 stands still is still unknown).
 
 </details>
@@ -255,6 +288,8 @@ The short version of [`TestingAndFinding.md`](TestingAndFinding.md). Plain words
 - Whether x = 2 or y = 2 causes the fall in Test 10.1 (both were out of range), and where between 1.5 / 0.8 (walks) and 2 / 2 (falls) the policy stops following.
 - Whether the faster ramp climb at 1.5 / 0.8 comes from the x part or the y part, and whether any command gets it up the 25° ramp.
 - What causes the out-of-memory crash (three runs now), and why the 254M policy is slower on the 15° ramp and waves its legs after falling (one run, three resumed parts).
+- Why the Test 11 policy stalls on the 15° ramp, why more steps (Test 11.2) moved the stall to the foot of it, and whether that is just seed-to-seed spread (needs more seeds).
+- Why a reset every 1000 steps stops the walking (Test 11.1, one seed), and where between 200 and 1000 steps it stops. A reset every 400 or 500 steps, or no forced reset, is not tried.
 - Why the Test 11 policy freezes on the 15° ramp (my hypothesis is the standing state of Tests 1 to 4), and whether it would leave it with more steps, another seed, or a start at rest on the slope.
 - How often training episodes on the ramp ground reach the 15° and 25° rings (now my guess is that even the 15° ring is almost never reached, because of the reset every 200 steps), and whether a longer interval, a closer ramp, random start points or a slope curriculum would let the policy learn the 25° ramp.
 - Why it falls on the stairs (the steep riser, the step height or the speed), whether another speed gets up them, and whether the trunk sinking under the ground after a fall comes from the feet-only collision file (Test 10, none of these tested).

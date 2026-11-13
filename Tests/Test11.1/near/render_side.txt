@@ -1,0 +1,13 @@
+side: 1625 frames at 25 fps in 1120 s -> /mnt/c/Users/Admin/Documents/HaiDuong/Tests/Test11.1/near/side_x1.5_y0.0_yaw0.0_SlopeRingsGround_2_go1_final_65s.mp4
+done
+Exception ignored in: <function Renderer.__del__ at 0x773887ca1260>
+Traceback (most recent call last):
+  File "/home/thanh/go1env/lib/python3.12/site-packages/mujoco/rendering/classic/renderer.py", line 349, in __del__
+  File "/home/thanh/go1env/lib/python3.12/site-packages/mujoco/rendering/classic/renderer.py", line 335, in close
+  File "/home/thanh/go1env/lib/python3.12/site-packages/mujoco/egl/__init__.py", line 130, in free
+TypeError: 'NoneType' object is not callable
+Exception ignored in: <function GLContext.__del__ at 0x773887ca0b80>
+Traceback (most recent call last):
+  File "/home/thanh/go1env/lib/python3.12/site-packages/mujoco/egl/__init__.py", line 139, in __del__
+  File "/home/thanh/go1env/lib/python3.12/site-packages/mujoco/egl/__init__.py", line 130, in free
+TypeError: 'NoneType' object is not callable

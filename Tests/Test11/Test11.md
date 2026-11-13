@@ -103,9 +103,11 @@ Files in [near/](./near/) (`*_x1.0_*`, `*_x0.85_*`), script [run_test11_cmds.sh]
   - *Exposure.* Training episodes were cut at 200 steps (4 s) and cover about 4.4 m, up to about 6 m at the 1.5 m/s ceiling. The stops at 5.8 to 6.8 m on the new ground are around that edge. The policy has no position sensor, so it cannot know where it is; the point is only that the states it meets late in a long rollout may be ones it never trained on. The old ground froze at 11.8 m, far from that edge, so this cannot be the whole story. What the training robots reached was not logged.
 - **How to test it.** (1) Recompute the reward terms of the frozen pose from the Playground reward code, or save them in the rollout, and compare the sum with the per-episode training reward. (2) Run the same training for longer or with another seed, to see whether it leaves the plateau the way the flat runs do after about 55M steps. (3) Start the policy at rest on the slope with a command and see whether it ever moves off.
 
-## Next (planned, not run)
+## Follow-up: Test 11.1
 
-**Test 12:** the same training as this test with one change, a longer reset interval: `Scripts/train_terrain.py --resets 2`, so all robots are reset every 1000 steps (20 s, the episode cap) instead of every 200. The 200-step interval cut training episodes before the robot could get far up the ramp. Script [../Test12/run_test12.sh](../Test12/run_test12.sh). A 1000-step interval has never been run (Test 9.2 covers 40 to 120 only), so it may fail to walk at all. It was started once and stopped after about a minute, so there are no results yet.
+**[Test 11.1](../Test11.1/Test11.1.md)** is the same training with one change, a longer reset interval: `Scripts/train_terrain.py --resets 2`, so all robots are reset every 1000 steps (20 s, the episode cap) instead of every 200. The 200-step interval cut training episodes before the robot could get far up the ramp. Result (one seed): the policy **stood still from the first step and never walked** (0.05 m in 65 s, `track` 0.0001, reward 18 to 21), so it did not get up the ramp and did not test the "episodes too short" idea for the stall above.
+
+**[Test 11.2](../Test11.2/Test11.2.md)** trains this policy for as many steps again (245.76M in total, the second part with seed 1). Result (one chain): it stalls earlier, 0.6 to 0.7 m up the 15° ramp (8% and 9% of its length, measured from the ring centre), then slides back to the foot; the reward stays at 17 to 19. More steps did not help.
 
 ## Takeaways
 

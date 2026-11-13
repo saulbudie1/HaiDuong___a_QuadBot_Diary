@@ -1,24 +1,24 @@
 #!/bin/bash
-# Test 12: Test 11 again (SlopeRingsGround_2, ramp 2 m from the start, 120M steps requested, 16 evaluations, 4096 envs, seed 0)
+# Test 11.1: Test 11 again (SlopeRingsGround_2, ramp 2 m from the start, 120M steps requested, 16 evaluations, 4096 envs, seed 0)
 # with ONE change: --resets 2, so all robots are reset every 1000 steps (20 s, the episode cap) instead of every 200 steps (4 s).
 # Then roll out 1.5 / 0 / 0 for 65 s on the new ground and on the old ground SlopeRingsGround_1 (numbers and plots only).
-# Progress: tail -f ~/test12_progress.txt
+# Progress: tail -f ~/test11_1_progress.txt
 source ~/go1env/bin/activate
 REPO=/mnt/c/Users/Admin/Documents/HaiDuong
 SCRIPTS=$REPO/Scripts
-T=$REPO/Tests/Test12
+T=$REPO/Tests/Test11.1
 G1=$REPO/Assets/Grounds/SlopeRingsGround_1.xml
 G2=$REPO/Assets/Grounds/SlopeRingsGround_2.xml
-PROGRESS=~/test12_progress.txt
+PROGRESS=~/test11_1_progress.txt
 DIR=~/go1_long
 X=1.5; Y=0; SEC=65
 filter() { grep --line-buffered -vE "solver iterations|To disable|linesearch iterations|^Module .* load on device|Failed to all|Source Location|external/xla|^\s*$"; }
 say() { echo "[$(date +%H:%M)] $*" | tee -a $PROGRESS; }
 : > $PROGRESS
 mkdir -p $T/near $T/orig $T/policy
-cp "$0" $T/run_test12.sh
+cp "$0" $T/run_test11_1.sh
 
-say "Test 12 started"
+say "Test 11.1 started"
 say "training on SlopeRingsGround_2: 120M requested, 16 evaluations, 4096 envs, seed 0, --resets 2"
 mkdir -p $DIR && cd $DIR
 nvidia-smi --query-gpu=timestamp,memory.used,memory.total --format=csv,noheader -l 20 > gpu.log &
@@ -48,4 +48,4 @@ for d in near orig; do
   python $SCRIPTS/plot_trail.py $npz -o $T/$d 2>&1 | filter | tail -n 2
   python $SCRIPTS/plot_track_steps.py $npz -o $T/$d/track_steps.png 2>&1 | filter | tail -n 2
 done
-say "Test 12 finished"
+say "Test 11.1 finished"

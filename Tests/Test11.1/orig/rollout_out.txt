@@ -1,0 +1,15 @@
+Warp 1.18.0 initialized:
+   CUDA Toolkit 13.4, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5060 Laptop GPU" (8 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/thanh/.cache/warp/1.18.0
+ground: /mnt/c/Users/Admin/Documents/HaiDuong/Assets/Grounds/SlopeRingsGround_1.xml   command: 1.5 0.0 0.0   checkpoint: go1_final   (181 s)
+mean track: 0.0001
+mean linvel (body frame): [-2.4857874e-05 -8.0292707e-04 -6.9283089e-04]
+distance from start: 0.05 m in 65 s
+body height: min 0.304  mean 0.306  max 0.357 m
+upright (1 = level): min 0.998  at the end 1.000
+fell (episode terminated): no
+saved /mnt/c/Users/Admin/Documents/HaiDuong/Tests/Test11.1/orig/motion_x1.5_y0.0_yaw0.0_SlopeRingsGround_1_go1_final_65s.npz
