@@ -3,7 +3,7 @@
 <div align="center">
 
 ### Latest test: [Test 11](Tests/Test11/Test11.md)
-**The ramp ground is moved 8 m closer, so the 15° ramp starts 2 m from the start, and a policy is trained on it (122.88M steps, about 25 minutes). It walks the flat part, climbs the 15° ramp at about 1.1 m/s, then stops at about 8.4 s and stands still on the slope for the rest of the 65 s. It never falls and never reaches the 25° ramp. My hypothesis, not tested: it has settled into the same "stand still and keep the standing reward" state as my Tests 1 to 4.**
+**The ramp ground is moved 8 m closer, so the 15° ramp starts 2 m from the start, and a policy is trained on it (122.88M steps, about 25 minutes). It walks the flat part, climbs the 15° ramp at about 1.1 m/s, then stops at about 8.4 s, about 60% of the way up the 8 m ramp, and stands still on the slope for the rest of the 65 s. It never falls, never reaches the top of the 15° ramp and never reaches the 25° ramp. The same stop happens at commands 1.0 and 0.85, and on the old ground (23% of the way up). My hypothesis, not tested: it has settled into the same "stand still and keep the standing reward" state as my Tests 1 to 4.**
 
 <a href="Tests/Test11/Test11.md"><img src="Tests/Test11/preview/track_near.gif" width="288" alt="Test 11, Go1 climbing the 15 degree ramp and then standing still on it at command 1.5 / 0, tracking-camera view"></a>
 <br><sub>tracking view &nbsp;·&nbsp; command x = 1.5, y = 0 &nbsp;·&nbsp; 6.5 s to 12.5 s of a 65 s run: the robot is climbing the ramp and comes to rest at about 8.4 s</sub>
@@ -14,6 +14,8 @@
 
 <a href="Tests/Test11/Test11.md"><img src="Tests/Test11/near/trail_x1.5_y0.0_yaw0.0_SlopeRingsGround_2_go1_final_65s.png" width="480" alt="Test 11, bird's-eye trail for command 1.5, 0, 0 on the new ground"></a>
 <br><sub>bird's-eye trail: body centre and head tip (drawn 2 m ahead), start to end</sub>
+
+<sub>Why it stops is not known. Other explanations I cannot rule out: a poor local optimum (standing scores about 17 to 19 per episode against 26 to 27 for walking on flat ground), a policy that finds standing safer than moving on a slope, or training episodes cut at 200 steps (4 s) that never took the robot this far. One seed, one rollout per command. Planned next, not run: <a href="Tests/Test11/Test11.md#next-planned-not-run">Test 12</a>, the same training with the reset interval raised from 200 to 1000 steps.</sub>
 
 <sub>The same series, all on the ramp ground: <a href="Tests/Test10/Test10.md">Test 10</a> (flat-trained policy, 0.85 / 0 / 0, slow and in stalls up the 15° ramp, fell on the stairs) &nbsp;·&nbsp; <a href="Tests/Test10.1/Test10.1.md">10.1</a> (2 / 2 / 0, above the trained range, fell in 1.4 s on flat ground) &nbsp;·&nbsp; <a href="Tests/Test10.2/Test10.2.md">10.2</a> (1.5 / 0.8 / 0, crossed the 15° ramp in 9 s, fell at the 25° ramp) &nbsp;·&nbsp; <a href="Tests/Test10.3/Test10.3.md">10.3</a> (trained on the ramp ground, 1.5 / 0.8 / 0, same result) &nbsp;&middot;&nbsp; <a href="Tests/Test10.4/Test10.4.md">10.4</a> (the same policy at 1.5 / 0 / 0, stalled at the foot of the 25&deg; ramp and fell at 26.3 s) &nbsp;&middot;&nbsp; <a href="Tests/Test10.5/Test10.5.md">10.5</a> (about twice the training steps, no gain)</sub>
 
