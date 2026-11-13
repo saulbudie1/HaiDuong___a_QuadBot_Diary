@@ -91,12 +91,21 @@ Files in [near/](./near/) (`*_x1.0_*`, `*_x0.85_*`), script [run_test11_cmds.sh]
 
 - **The stopping time changes with the command (8.4, 11.6, 12.6 s), the distance up the ramp much less (4.8, 4.7, 3.8 m).** So it is not tied to a clock, which the policy does not have anyway. It stops around 6 to 7 m from the start at the two higher commands and a metre earlier at 0.85. The old ground (command 1.5) froze at 11.82 m, only 1.8 m up its ramp, so it is not a fixed distance on the ramp either.
 - A lower command does not remove the freeze, so a command that is too hard to follow is not the reason.
+- **It stops before the top every time.** The 15° band is 8 m long (ring distance). The robot stopped 4.8 m up (about 60%), 4.7 m (about 59%) and 3.8 m (about 48%) on the new ground at the three commands, and 1.8 m up (about 23%) on the old ground. It never reached the flat plateau after the ramp. The share is "ring distance when it stopped minus where the ramp starts, over 8 m".
 
 ## Hypothesis (mine, not tested): it settles into the same "stand still and keep the standing reward" state as Tests 1 to 4
 
 - **Why I think so.** After the stop the robot is upright, the joints barely move (about 0.04 rad/s against 2.5 while walking) and it holds a normal stance, which is what a standing policy does. In Tests 1 to 4 and 6 the robots stood still on flat ground and still scored about 17 to 19 per episode, because the pose term (about 10 of the roughly 40 possible) pays for standing ([TestingAndFinding.md](../../TestingAndFinding.md)). The training reward of this run sits at 17.7 to 20.5 from 24.6M steps on.
 - **What does not fit or is missing.** The reward is measured on a different ground, so I cannot read 19 as "standing level" the way I can on flat ground. The rollout does not save the individual reward terms, only `track`, so I have not measured what the frozen robot earns. The freeze starts only after the robot has walked and climbed, so it is not the same as never having learned to walk (on the flat part it tracks the command at 1.0 to 1.3 m/s).
+- **Other explanations I cannot rule out (none tested).**
+  - *A local optimum, not a glitch.* Standing pays by design (the pose term), so it is not a loophole in the reward, but it scores less than walking on flat ground (about 17 to 19 against 26 to 27 per episode). Stopping also gives up the `track` reward the robot was earning while it climbed, so a stop looks like a worse policy, not a cleverer one. Whether the frozen pose earns more or less per step than the walking did is not known, because the rollout does not save the reward terms. "Reward hacking" would need that comparison before I can say it.
+  - *Safe but poor.* A fall ends the episode, so staying still on a slope could look safer to the policy than moving. Not tested.
+  - *Exposure.* Training episodes were cut at 200 steps (4 s) and cover about 4.4 m, up to about 6 m at the 1.5 m/s ceiling. The stops at 5.8 to 6.8 m on the new ground are around that edge. The policy has no position sensor, so it cannot know where it is; the point is only that the states it meets late in a long rollout may be ones it never trained on. The old ground froze at 11.8 m, far from that edge, so this cannot be the whole story. What the training robots reached was not logged.
 - **How to test it.** (1) Recompute the reward terms of the frozen pose from the Playground reward code, or save them in the rollout, and compare the sum with the per-episode training reward. (2) Run the same training for longer or with another seed, to see whether it leaves the plateau the way the flat runs do after about 55M steps. (3) Start the policy at rest on the slope with a command and see whether it ever moves off.
+
+## Next (planned, not run)
+
+**Test 12:** the same training as this test with one change, a longer reset interval: `Scripts/train_terrain.py --resets 2`, so all robots are reset every 1000 steps (20 s, the episode cap) instead of every 200. The 200-step interval cut training episodes before the robot could get far up the ramp. Script [../Test12/run_test12.sh](../Test12/run_test12.sh). A 1000-step interval has never been run (Test 9.2 covers 40 to 120 only), so it may fail to walk at all. It was started once and stopped after about a minute, so there are no results yet.
 
 ## Takeaways
 

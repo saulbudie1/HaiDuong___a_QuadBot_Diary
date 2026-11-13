@@ -58,6 +58,10 @@ seed = opt("--seed", 0, int)
 # start again, so the step numbers printed and used in the ckpt_<step> names count from 0 again, and it is not the same as one
 # unbroken run. Used when a long run crashes with a GPU out-of-memory error: run the rest in a fresh process in a new folder.
 resume = opt("--resume", None, str)
+# --resets N: set ppo_params.num_resets_per_eval (the default of the Go1 config is 10, a forced reset of all robots every 200 steps
+# at 120M steps, 4096 envs and 16 evaluations). The interval in steps is printed at the start. N = 2 gives 1000 steps (the
+# episode cap, 20 s); N = 0 means no forced reset (episodes end only by a fall or the cap). Without the option nothing changes.
+resets = opt("--resets", None, int)
 ground = argv[0]
 
 xml = epath.Path(ground)
@@ -79,7 +83,17 @@ ppo_params = locomotion_params.brax_ppo_config("Go1JoystickRoughTerrain")
 ppo_params.num_timesteps = steps
 ppo_params.num_evals = evals
 ppo_params.num_envs = envs
+if resets is not None:
+    ppo_params.num_resets_per_eval = resets
 print("num_timesteps", steps, "num_evals", evals, "num_envs", envs, "seed", seed, flush=True)
+# Reset interval, computed from Brax's ppo/train.py (not read back from the run): updates per reset chunk x steps per robot per update.
+_per_update = ppo_params.batch_size * ppo_params.unroll_length * ppo_params.num_minibatches
+_chunk = -(-steps // (max(evals - 1, 1) * _per_update * max(ppo_params.num_resets_per_eval, 1)))
+if ppo_params.num_resets_per_eval > 0:
+    print("num_resets_per_eval", ppo_params.num_resets_per_eval, "-> forced reset of all robots every",
+          _chunk * _per_update // envs, "steps (computed); episode_length", ppo_params.episode_length, flush=True)
+else:
+    print("num_resets_per_eval 0 -> no forced resets; episode_length", ppo_params.episode_length, flush=True)
 
 x_data, y_data = [], []
 times = [datetime.now()]

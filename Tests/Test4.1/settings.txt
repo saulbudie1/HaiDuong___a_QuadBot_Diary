@@ -1,0 +1,3 @@
+28:ppo_params.num_timesteps = 25_000_000
+29:ppo_params.num_evals = 3
+30:ppo_params.num_envs = 4096            # smaller, to fit 8 GB
